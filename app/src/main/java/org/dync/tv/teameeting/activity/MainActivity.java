@@ -1,5 +1,6 @@
 package org.dync.tv.teameeting.activity;
 
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -20,6 +21,8 @@ import com.orhanobut.logger.Logger;
 
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
+import org.dync.tv.teameeting.bean.ReqSndMsgEntity;
+import org.dync.tv.teameeting.structs.EventType;
 
 
 public class MainActivity extends BaseMeetingActivity implements View.OnFocusChangeListener {
@@ -57,6 +60,14 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
     public int translationY = 0;//跟随button获取焦点移动的Y距离
     public String phone = "";
 
+
+    @Override
+    protected void onRequesageMsg(ReqSndMsgEntity reqSndMsg) {
+        /**
+         * 弹出进会对话框，
+         * 确定：进会，取消；呆在主界面
+         */
+    }
 
     @Override
     protected int provideContentViewId() {
@@ -335,5 +346,29 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
                 break;
         }
         imageButton.animate().translationX(translationX).translationY(translationY).setDuration(200).start();
+    }
+
+    /**
+     * EeventBus方法
+     *
+     * @param msg
+     */
+    @Override
+    public void onEventMainThread(Message msg) {
+        switch (EventType.values()[msg.what]) {
+            case MSG_RESPONS_ESTR_NULl:
+                if (mDebug)
+                    Log.e(TAG, "onEventMainThread:请求网络失败 ");
+                break;
+            case MSG_GET_MEETING_INFO_SUCCESS:
+                if (mDebug)
+                    Log.e(TAG, "MSG_GET_MEETING_INFO_SUCCESS");
+            case MSG_GET_MEETING_INFO_FAILED:
+                if (mDebug)
+                    Log.e(TAG, "MSG_GET_MEETING_INFO_FAILED");
+            default:
+                break;
+        }
+
     }
 }

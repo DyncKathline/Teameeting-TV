@@ -9,8 +9,11 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import com.orhanobut.logger.Logger;
 
 import org.apache.http.Header;
+import org.dync.tv.teameeting.structs.EventType;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by zhulang on 2015/12/28 0028.
@@ -33,7 +36,8 @@ public class TmTextHttpResponseHandler extends TextHttpResponseHandler {
     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
         // network or server  problem
         Logger.e("onFailure: "+statusCode+"-----responseString" +responseString);
-
+        msg.what = EventType.MSG_RESPONS_ESTR_NULl.ordinal();
+        EventBus.getDefault().post(msg);
     }
 
     @Override

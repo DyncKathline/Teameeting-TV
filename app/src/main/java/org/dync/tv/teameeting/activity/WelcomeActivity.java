@@ -15,6 +15,7 @@ import com.orhanobut.logger.Logger;
 import org.apache.http.Header;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
+import org.dync.tv.teameeting.bean.MeetingList;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.SelfData;
 import org.dync.tv.teameeting.http.HttpContent;
@@ -27,8 +28,10 @@ import org.json.JSONObject;
 public class WelcomeActivity extends AppCompatActivity {
 
     private static final int MESSAGE_INIT_SUCCESS = 0X02;
+    private static final int MESSAGE_GETLIST_SUCCESS = 0X03;
     private NetWork mNetWork;
     private String mUserid;
+    private String mSign;
     private boolean mDebug = TVAPP.mDebug;
     public String TAG = this.getClass().getSimpleName();
     private TVAPP mTVAPP;
@@ -41,8 +44,10 @@ public class WelcomeActivity extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case MESSAGE_INIT_SUCCESS:
-                    applyRoom(mRoomName);
+                    getRoomLists(mTVAPP.getAuthorization(), 1 + "", 20 + "");
                     break;
+                case MESSAGE_GETLIST_SUCCESS:
+                    initData();
                 default:
                     break;
             }
@@ -57,12 +62,12 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         mTVAPP = TVAPP.getmTVAPP();
         mUserid = mTVAPP.getDevId();
+        mSign = mTVAPP.getAuthorization();
         initAppData(mUserid, "2", "2", "2", "TeamMeeting");
 
     }
 
     private void initData() {
-
         String userinfoStr = LocalUserInfo.getInstance(mContext).getUserStr(LocalUserInfo.MEETING_LIST_ENTITY);
 
         if (userinfoStr.equals("")) {
@@ -115,12 +120,9 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param meetingName 房间名字
      */
     private void applyRoom(String meetingName) {
-
         String pushable = "1";
         String meetenablde = "1";
-
         String authorization = mTVAPP.getAuthorization();
-
         netApplyRoom(authorization, meetingName, "0", "", meetenablde, pushable);
     }
 
@@ -146,8 +148,9 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 super.onFailure(statusCode, headers, responseString, throwable);
-                //获取失败;
-                //提示用户
+                /**
+                 * 获取 用户数据失败
+                 */
             }
 
             @Override
@@ -216,6 +219,44 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * getRoomLists
+     *
+     * @param sign
+     * @param pageNum
+     * @param pageSize
+     */
+    public void getRoomLists(final String sign, final String pageNum, final String pageSize) {
+        String url = "meeting/getRoomList";
+        RequestParams params = new RequestParams();
+        params.put("sign", sign);
+        params.put("pageNum", pageNum);
+        params.put("pageSize", pageSize);
+
+        HttpContent.post(url, params, new TmTextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                if (mDebug)
+                    Log.e(TAG, "onFailure: --getRoomLists------" + responseString);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, int code, String message, String responseString) {
+                if (mDebug)
+                    Logger.e(responseString);
+                if (statusCode == 200) {
+                    MeetingList meetingList = gson.fromJson(responseString, MeetingList.class);
+                    if (meetingList != null) {
+                        //设置房间列表
+                        mTVAPP.setMeetingLists(meetingList.getMeetingList());
+                        handler.sendEmptyMessage(MESSAGE_GETLIST_SUCCESS);
+                    }
+                }
+            }
+        });
+
+    }
 
     /**
      * @param responseString

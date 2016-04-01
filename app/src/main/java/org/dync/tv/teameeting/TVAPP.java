@@ -10,6 +10,9 @@ import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.SelfData;
 import org.dync.tv.teameeting.chatmessage.ChatMessageClient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Xiao_Bailong on 2016/3/30.
  */
@@ -18,11 +21,11 @@ public class TVAPP extends Application {
     private static TVAPP mTVAPP;
     private static SelfData mSelfData;
 
-
     private static TMMsgSender mMsgSender; //消息控制
     private static ChatMessageClient mChatMessageClient;
     private static Context context;
     private MeetingListEntity meetingListEntity;
+    private List<MeetingListEntity> meetingLists = new ArrayList<>();//房间列表
 
     @Override
     public void onCreate() {
@@ -98,5 +101,27 @@ public class TVAPP extends Application {
             new NullPointerException("Authorization的签证为空");
         }
         return mSelfData.getAuthorization();
+    }
+
+    /**
+     * 设置房间列表
+     *
+     * @param meetingLists
+     */
+    public void setMeetingLists(List<MeetingListEntity> meetingLists) {
+        if (meetingLists != null) {
+            this.meetingLists.clear();
+            this.meetingLists = meetingLists;
+        }
+
+    }
+
+    /**
+     * 房间列表
+     *
+     * @return
+     */
+    public List<MeetingListEntity> getMeetingLists() {
+        return meetingLists;
     }
 }
