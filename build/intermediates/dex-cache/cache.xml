@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="F:\Work_Coding\Dync_TV\app\libs\msgclient_r1.0.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="aa562c4e06cfcc924dff3105151cf25496c4a3cc">
+        <dex dex="F:\Work_Coding\Dync_TV\app\build\intermediates\pre-dexed\debug\msgclient_r1.0.1-4b96aa36f3c637fc6516c57caf3d6934962d612e.jar" />
+    </item>
+
+</items>
