@@ -10,6 +10,7 @@ import org.anyrtc.AnyrtcMeet;
 import org.anyrtc.common.MeetEvents;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
+import org.dync.tv.teameeting.bean.ReqSndMsgEntity;
 import org.dync.tv.teameeting.structs.ExtraType;
 import org.dync.tv.teameeting.utils.AnyRTCViews;
 
@@ -30,6 +31,15 @@ public class MeetingActivity extends BaseActivity implements MeetEvents {
     public AnyRTCViews mAnyrtcViews;
     private MeetingListEntity mMeetingListEntity;
 
+
+    /**
+     *
+     * @param reqSndMsg
+     */
+    @Override
+    protected void onRequesageMsg(ReqSndMsgEntity reqSndMsg) {
+
+    }
 
     @Override
     protected int provideContentViewId() {
@@ -74,7 +84,7 @@ public class MeetingActivity extends BaseActivity implements MeetEvents {
         @Override
         public void OnPeopleNumChange(int peopleNum) {
             //有人进入
-            Log.e(TAG,"又热进入了");
+            Log.e(TAG, "有人进入了");
             rLayoutCallWait.setVisibility(View.GONE);
         }
     };

@@ -12,7 +12,7 @@ public abstract class BaseMeetingActivity extends BaseActivity {
 
 
     /**
-     * 进入会议室
+     * 进入房间
      *
      * @param meetingListEntity
      */
@@ -22,4 +22,6 @@ public abstract class BaseMeetingActivity extends BaseActivity {
         intent.putExtra(ExtraType.EXTRA_MEETING_ENTITY, meetingListEntity);
         startActivity(intent);
     }
+
+
 }
