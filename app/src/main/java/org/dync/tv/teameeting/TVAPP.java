@@ -30,7 +30,7 @@ public class TVAPP extends Application {
 
         mTVAPP = this;
         context = this;
-        initSDKData();
+        initSDKData();//初始化SDK配置
     }
 
     private void initSDKData() {
