@@ -2,6 +2,7 @@ package org.dync.tv.teameeting.activity;
 
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.ScaleAnimation;
@@ -252,13 +253,41 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
                     phone = phone.substring(0, phone.length() - 1);
                 break;
             case R.id.button13:
-                //进入会议室
-                enterStartMeeting(TVAPP.getmTVAPP().getMeetingListEntity());
+                enterMeeting();
                 break;
             case R.id.listView:
                 break;
         }
         editText.setText(phone);
+    }
+    /**
+     * 输入会议号码进入房间
+     */
+    public void enterMeeting() {
+        /**
+         *
+         * 1.获取到房间信息
+         *
+         * 2.判断是否可以加入：1.私密 2.当前的会议已经被删除
+         *
+         * 3.插入列表，并进入房间: 更新列表中的位置
+         *
+         *  都提示弹出通话动画的窗口
+         */
+
+    }
+
+    /***
+     * 遥控器单机列表进入房间
+     *
+     * @param position
+     */
+    public void enterListMeeting(String position) {
+        /**
+         * 1. 直接进入
+         * 2.更新列表中的位置
+         */
+
     }
 
     @Override
@@ -348,24 +377,46 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
         imageButton.animate().translationX(translationX).translationY(translationY).setDuration(200).start();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //退出
+        TVAPP.getmTVAPP().getMsgSender().TMUnin();
+        System.exit(0);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     /**
      * EeventBus方法
      *
      * @param msg
      */
     @Override
-    public void onEventMainThread(Message msg) {
+    public void onEventMainThreadAbs(Message msg) {
         switch (EventType.values()[msg.what]) {
-            case MSG_RESPONS_ESTR_NULl:
-                if (mDebug)
-                    Log.e(TAG, "onEventMainThread:请求网络失败 ");
-                break;
             case MSG_GET_MEETING_INFO_SUCCESS:
                 if (mDebug)
-                    Log.e(TAG, "MSG_GET_MEETING_INFO_SUCCESS");
-            case MSG_GET_MEETING_INFO_FAILED:
+                    Log.e(TAG, "MSG_GET_MEETING_INFO_SUCCESS--获取用户列表成功");
+                break;
+
+            case MSG_GET_ROOM_LIST_SUCCESS:
+                if (mDebug) {
+                    Log.e(TAG, "onEventMainThread: --获取列表成功");
+                }
+                break;
+
+            case MSG_INSERT_USER_MEETING_ROOM_SUCCESS:
                 if (mDebug)
-                    Log.e(TAG, "MSG_GET_MEETING_INFO_FAILED");
+                    Log.e(TAG, "onEventMainThread: --插入成功");
+                break;
+
             default:
                 break;
         }

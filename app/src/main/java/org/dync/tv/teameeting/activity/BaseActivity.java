@@ -3,7 +3,6 @@ package org.dync.tv.teameeting.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,7 +10,7 @@ import android.view.MenuItem;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.ReqSndMsgEntity;
 import org.dync.tv.teameeting.chatmessage.ChatMessageClient;
-import org.dync.tv.teameeting.structs.EventType;
+import org.dync.tv.teameeting.http.NetWork;
 
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
@@ -26,6 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public String TAG = this.getClass().getSimpleName();
     private ChatMessageClient mChatMessageClinet;
     public Context context;
+    public NetWork mNetWork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(provideContentViewId());
         ButterKnife.bind(this);
         context = this;
+        mNetWork = new NetWork();
         init();
         EventBus.getDefault().register(this);
         if (mDebug)
@@ -44,7 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 注册消息接受者
      */
     private void registerObserverClinet() {
-        mChatMessageClinet = TVAPP.getmChatMessageClient();
+        mChatMessageClinet = TVAPP.getmTVAPP().getmChatMessageClient();
         mChatMessageClinet.registerObserver(chatMessageObserver);
     }
 
@@ -130,12 +131,5 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void onEventMainThread(Message msg) {
-        switch (EventType.values()[msg.what]) {
-            case MSG_MESSAGE_RECEIVE:
-                break;
-            default:
-                break;
-        }
-    }
+
 }
