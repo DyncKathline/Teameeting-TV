@@ -25,7 +25,13 @@ public class TVAPP extends Application {
     private static ChatMessageClient mChatMessageClient;
     private static Context context;
     private MeetingListEntity meetingListEntity;
-    private List<MeetingListEntity> meetingLists = new ArrayList<>();//房间列表
+    private MeetingListEntity mMeetingListEntityInfo; //获取到的会议信息
+    private List<MeetingListEntity> mMeetingLists = new ArrayList<MeetingListEntity>();
+
+    public TVAPP() {
+        mTVAPP = this;
+    }
+
 
     @Override
     public void onCreate() {
@@ -50,6 +56,9 @@ public class TVAPP extends Application {
      * @return
      */
     public static TVAPP getmTVAPP() {
+        if (mTVAPP == null) {
+            mTVAPP = new TVAPP();
+        }
         return mTVAPP;
     }
 
@@ -61,6 +70,15 @@ public class TVAPP extends Application {
         this.meetingListEntity = meetingListEntity;
     }
 
+
+    public MeetingListEntity getmMeetingListEntityInfo() {
+        return mMeetingListEntityInfo;
+    }
+
+    public void setmMeetingListEntityInfo(MeetingListEntity mMeetingListEntityInfo) {
+        this.mMeetingListEntityInfo = mMeetingListEntityInfo;
+    }
+
     /**
      * get the device id unique
      *
@@ -70,15 +88,15 @@ public class TVAPP extends Application {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static TMMsgSender getMsgSender() {
+    public TMMsgSender getMsgSender() {
         return mMsgSender;
     }
 
-    public static ChatMessageClient getmChatMessageClient() {
+    public ChatMessageClient getmChatMessageClient() {
         return mChatMessageClient;
     }
 
-    public static Context getContext() {
+    public Context getContext() {
         return context;
     }
 
@@ -103,25 +121,27 @@ public class TVAPP extends Application {
         return mSelfData.getAuthorization();
     }
 
-    /**
-     * 设置房间列表
-     *
-     * @param meetingLists
-     */
+
     public void setMeetingLists(List<MeetingListEntity> meetingLists) {
         if (meetingLists != null) {
-            this.meetingLists.clear();
-            this.meetingLists = meetingLists;
+            this.mMeetingLists.clear();
+            this.mMeetingLists = meetingLists;
         }
 
     }
 
-    /**
-     * 房间列表
-     *
-     * @return
-     */
+
     public List<MeetingListEntity> getMeetingLists() {
-        return meetingLists;
+        return mMeetingLists;
+    }
+
+    /**
+     * 获取到的列表信息加到头部列表
+     */
+    public void addMeetingHeardEntity() {
+        if (mMeetingListEntityInfo != null) {
+            mMeetingListEntityInfo.setJointime(System.currentTimeMillis());
+            mMeetingLists.add(0, mMeetingListEntityInfo);
+        }
     }
 }
