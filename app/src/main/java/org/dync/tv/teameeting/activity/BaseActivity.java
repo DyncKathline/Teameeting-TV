@@ -26,6 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ChatMessageClient mChatMessageClinet;
     public Context context;
     public NetWork mNetWork;
+    public TVAPP mTVAPP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +34,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(provideContentViewId());
         ButterKnife.bind(this);
         context = this;
-        mNetWork = new NetWork();
-        init();
         EventBus.getDefault().register(this);
+        mNetWork = new NetWork();
+        mTVAPP = TVAPP.getmTVAPP();
+        init();
+
         if (mDebug)
             Log.i(TAG, "onCreate");
         registerObserverClinet();
@@ -126,10 +129,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+        EventBus.getDefault().unregister(this);
         if (mDebug)
             Log.i(TAG, "onDestroy");
 
     }
+
+
 
 
 }

@@ -86,7 +86,7 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/edit"
+                android:id="@+id/edit_meet_num"
                 android:layout_width="210dp"
                 android:layout_height="70dp"
                 android:singleLine="true"

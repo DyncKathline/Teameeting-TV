@@ -144,4 +144,21 @@ public class TVAPP extends Application {
             mMeetingLists.add(0, mMeetingListEntityInfo);
         }
     }
+
+    /**
+     * 返回MeetingID在当前列表当中的位置
+     * @param meetingId
+     * @return
+     */
+    public int getMeetingIdPosition(String meetingId) {
+
+        for (int i = 0; i < mMeetingLists.size(); i++) {
+            MeetingListEntity meetingListEntity = mMeetingLists.get(i);
+            if (meetingId.equals(meetingListEntity.getMeetingid())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }

@@ -6,8 +6,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.ScaleAnimation;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,14 +20,18 @@ import com.orhanobut.logger.Logger;
 
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
+import org.dync.tv.teameeting.adapter.RoomListAdapter;
+import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.ReqSndMsgEntity;
 import org.dync.tv.teameeting.structs.EventType;
+
+import java.util.List;
 
 
 public class MainActivity extends BaseMeetingActivity implements View.OnFocusChangeListener {
 
     public LinearLayout llayout;//layout_meeting.xml
-    public EditText editText;//
+    public EditText editMeetNum;//
     public ImageView scaleImageView;//缩放二维码图片的框
     public ImageView imageview;//二维码图片
     public Button button1;//数字1
@@ -60,7 +62,8 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
     public int translationX = 0;//跟随button获取焦点移动的X距离
     public int translationY = 0;//跟随button获取焦点移动的Y距离
     public String phone = "";
-
+    public List<MeetingListEntity> mMeetingLists;
+    private RoomListAdapter adapter;
 
     @Override
     protected void onRequesageMsg(ReqSndMsgEntity reqSndMsg) {
@@ -90,18 +93,10 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
         //获取会议ID
         phoneTextView.setText(TVAPP.getmTVAPP().getMeetingListEntity().getMeetingid());
         //模拟数据
-        final String[] str_name = new String[]{"jack", "debb", "robin", "kikt"};
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, str_name[position], Toast.LENGTH_SHORT).show();
-            }
-        });
-        //创建ArrayAdapter
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                MainActivity.this, android.R.layout.simple_list_item_1, str_name);
-        //绑定适配器
-        listView.setAdapter(arrayAdapter);
+        mMeetingLists = mTVAPP.getMeetingLists();
+        adapter = new RoomListAdapter(mMeetingLists, context);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void initListener() {
@@ -190,7 +185,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
         llayout = (LinearLayout) findViewById(R.id.llayout);
         scaleImageView = (ImageView) findViewById(R.id.scaleImageView);
         imageview = (ImageView) findViewById(R.id.imageView);
-        editText = (EditText) findViewById(R.id.edit);
+        editMeetNum = (EditText) findViewById(R.id.edit_meet_num);
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
@@ -253,20 +248,24 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
                     phone = phone.substring(0, phone.length() - 1);
                 break;
             case R.id.button13:
-                enterMeeting();
+                String meetNum = editMeetNum.getText().toString();
+                enterMeeting(meetNum);
                 break;
             case R.id.listView:
                 break;
         }
-        editText.setText(phone);
+        editMeetNum.setText(phone);
     }
+
     /**
      * 输入会议号码进入房间
      */
-    public void enterMeeting() {
+    public void enterMeeting(String meetNumId) {
         /**
          *
-         * 1.获取到房间信息
+         * 判断格式是否合法;
+         *
+         * 1.获取到房间信息.
          *
          * 2.判断是否可以加入：1.私密 2.当前的会议已经被删除
          *
@@ -274,6 +273,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
          *
          *  都提示弹出通话动画的窗口
          */
+
+        mNetWork.getMeetingInfo(meetNumId);
+
 
     }
 
@@ -289,6 +291,53 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
          */
 
     }
+
+    /**
+     * 获取到会议信息成功
+     *
+     * @param msg
+     */
+    private void getMeetingInfoSuccess(Message msg) {
+
+        MeetingListEntity meetingListEntityInfo = mTVAPP.getmMeetingListEntityInfo();
+        int usable = meetingListEntityInfo.getMeetenable();
+        String meetinId = meetingListEntityInfo.getMeetingid();
+        int position = mTVAPP.getMeetingIdPosition(meetinId);
+        if (mDebug)
+            Log.e(TAG, "getMeetingInfoSuccess: ------position" + position);
+        switch (usable) {
+            case 0:
+                /**
+                 * 会议已经被删除；
+                 */
+                Toast.makeText(context, R.string.str_meeting_deleted, Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                if (position < 0) {
+                    mNetWork.insertUserMeetingRoom(mTVAPP.getAuthorization(), meetinId);
+                } else {
+                    enterStartMeeting(meetingListEntityInfo);
+                }
+                break;
+            case 2://private
+                if (position < 0) {
+                    Toast.makeText(context, R.string.str_meeting_privated, Toast.LENGTH_SHORT).show();
+                } else {
+                    enterStartMeeting(meetingListEntityInfo);
+                }
+                break;
+        }
+
+    }
+
+    /**
+     * 插入会议成功
+     */
+    private void insertMeetingSuccess() {
+        adapter.notifyDataSetChanged();
+        enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
+    }
+
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
@@ -398,12 +447,16 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
      *
      * @param msg
      */
-    @Override
-    public void onEventMainThreadAbs(Message msg) {
+    public void onEventMainThread(Message msg) {
         switch (EventType.values()[msg.what]) {
+            case MSG_RESPONS_ESTR_NULl:
+                if (mDebug)
+                    Log.e(TAG, "onEventMainThread:请求网络失败 ");
+                break;
             case MSG_GET_MEETING_INFO_SUCCESS:
                 if (mDebug)
                     Log.e(TAG, "MSG_GET_MEETING_INFO_SUCCESS--获取用户列表成功");
+                getMeetingInfoSuccess(msg);
                 break;
 
             case MSG_GET_ROOM_LIST_SUCCESS:
@@ -414,12 +467,18 @@ public class MainActivity extends BaseMeetingActivity implements View.OnFocusCha
 
             case MSG_INSERT_USER_MEETING_ROOM_SUCCESS:
                 if (mDebug)
-                    Log.e(TAG, "onEventMainThread: --插入成功");
+                    Log.e(TAG, "onEventMainThread: --列表成功");
+                insertMeetingSuccess();
                 break;
-
+            case MSG_UP_DATE_USER_MEETING_JOIN_TIME_SUCCESS:
+                if (mDebug)
+                    Log.e(TAG, "onEventMainThread: --更新时间成功" );
+                adapter.notifyDataSetChanged();
+                break;
             default:
                 break;
         }
 
     }
+
 }

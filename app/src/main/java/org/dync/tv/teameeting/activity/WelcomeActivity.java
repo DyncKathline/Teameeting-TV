@@ -19,7 +19,6 @@ import org.dync.tv.teameeting.bean.MeetingList;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.SelfData;
 import org.dync.tv.teameeting.http.HttpContent;
-import org.dync.tv.teameeting.http.NetWork;
 import org.dync.tv.teameeting.http.TmTextHttpResponseHandler;
 import org.dync.tv.teameeting.utils.LocalUserInfo;
 import org.json.JSONException;
@@ -29,7 +28,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private static final int MESSAGE_INIT_SUCCESS = 0X02;
     private static final int MESSAGE_GETLIST_SUCCESS = 0X03;
-    private NetWork mNetWork;
     private String mUserid;
     private String mSign;
     private boolean mDebug = TVAPP.mDebug;
@@ -62,7 +60,7 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         mTVAPP = TVAPP.getmTVAPP();
         mUserid = mTVAPP.getDevId();
-        mSign = mTVAPP.getAuthorization();
+
         initAppData(mUserid, "2", "2", "2", "TeamMeeting");
 
     }
@@ -162,6 +160,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 if (code == 200) {
                     SelfData selfData = gson.fromJson(responseString, SelfData.class);
                     mTVAPP.setSelfData(selfData);
+                    mSign = mTVAPP.getAuthorization();
                     if (mDebug) {
                         Log.i(TAG, "getInformation" + selfData.getInformation().toString());
                     }

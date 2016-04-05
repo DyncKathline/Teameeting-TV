@@ -1,6 +1,7 @@
 package org.dync.tv.teameeting.activity;
 
 import android.content.Intent;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,6 +12,7 @@ import org.anyrtc.common.MeetEvents;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.ReqSndMsgEntity;
+import org.dync.tv.teameeting.structs.EventType;
 import org.dync.tv.teameeting.structs.ExtraType;
 import org.dync.tv.teameeting.utils.AnyRTCViews;
 
@@ -33,7 +35,6 @@ public class MeetingActivity extends BaseActivity implements MeetEvents {
 
 
     /**
-     *
      * @param reqSndMsg
      */
     @Override
@@ -107,5 +108,16 @@ public class MeetingActivity extends BaseActivity implements MeetEvents {
     @Override
     public void OnRtcLeaveMeet(int i) {
 
+    }
+
+
+    public void onEventMainThread(Message msg) {
+        switch (EventType.values()[msg.what]) {
+            case MSG_RESPONS_ESTR_NULl:
+                if (mDebug)
+                    Log.e(TAG, "onEventMainThread:请求网络失败 ");
+            default:
+                break;
+        }
     }
 }

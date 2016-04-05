@@ -5,6 +5,7 @@ import android.util.Log;
 import com.loopj.android.http.RequestParams;
 import com.orhanobut.logger.Logger;
 
+import org.apache.http.Header;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingList;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
@@ -12,6 +13,8 @@ import org.dync.tv.teameeting.structs.BundleType;
 import org.dync.tv.teameeting.structs.EventType;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -65,7 +68,7 @@ public class NetWork {
      * @param joinType
      * @return
      */
-    public void getMeetingInfo(final String meetingid, final String joinType) {
+    public void getMeetingInfo(final String meetingid) {
         String url = "meeting/getMeetingInfo/" + meetingid;
 
         HttpContent.get(url, new TmTextHttpResponseHandler() {
@@ -83,7 +86,6 @@ public class NetWork {
                         String info = json.getString("meetingInfo");
                         MeetingListEntity meetingListInfo = gson.fromJson(info, MeetingListEntity.class);
                         TVAPP.getmTVAPP().setmMeetingListEntityInfo(meetingListInfo);
-
                         bundle.putString(BundleType.PUT_STRING_INFO, info);
 
                     } catch (JSONException e) {
@@ -112,7 +114,7 @@ public class NetWork {
      * @param meetingid
      */
 
-    public void insertUserMeetingRoom(final String sign, final String meetingid, final String join_insert_type) {
+    public void insertUserMeetingRoom(final String sign, final String meetingid) {
 
         String url = "meeting/insertUserMeetingRoom";
         RequestParams params = new RequestParams();
@@ -139,6 +141,51 @@ public class NetWork {
             }
         });
 
+    }
+
+    /**
+     * updateUserMeetingJointime 18
+     *
+     * @param sign
+     * @param meetingid
+     */
+    public void updateUserMeetingJointime(final String sign, final String meetingid) {
+
+        RequestParams params = new RequestParams();
+        params.put("sign", sign);
+        params.put("meetingid", meetingid);
+
+        String url = "meeting/updateUserMeetingJointime";
+        HttpContent.post(url, params, new TmTextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, int code, String message, String responseString) {
+                super.onSuccess(statusCode, code, message, responseString);
+                if (mDebug)
+                    Log.e(TAG, "onSuccess: updateUserMeetingJointime" + responseString);
+                if (code == 200) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseString);
+                        long jointime = jsonObject.getLong("jointime");
+                        List<MeetingListEntity> meetingLists = TVAPP.getmTVAPP().getMeetingLists();
+                        int position = TVAPP.getmTVAPP().getMeetingIdPosition(meetingid);
+                        if (position<0)
+                            new NullPointerException("更新房间的位置不对");
+                        MeetingListEntity meetingListEntity = meetingLists.get(position);
+                        meetingListEntity.setJointime(jointime);
+                        meetingLists.remove(position);
+                        meetingLists.add(0, meetingListEntity);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    msg.what = EventType.MSG_UP_DATE_USER_MEETING_JOIN_TIME_SUCCESS.ordinal();
+                } else {
+                    msg.what = EventType.MSG_UP_DATE_USER_MEETING_JOIN_TIME_FAILED.ordinal();
+                }
+                bundle.putString("message", message);
+                msg.setData(bundle);
+                EventBus.getDefault().post(msg);
+            }
+        });
     }
 }
 
