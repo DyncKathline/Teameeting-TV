@@ -3,7 +3,6 @@
     android:id="@+id/llayout_call_ring"
     android:layout_width="@dimen/incoming_pad_loading_width"
     android:layout_height="match_parent"
-    android:background="@drawable/shape_corners_bg"
     android:orientation="vertical">
 
     <TextView
