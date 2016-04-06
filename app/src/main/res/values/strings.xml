@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AndroidTV</string>
+    <string name="str_meeting_deleted">会议已经被删除</string>
+    <string name="str_meeting_privated">私密会议拒接加入</string>
 </resources>

@@ -2,4 +2,8 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="incoming_pad_call_txt_size">33dp</dimen>
+    <dimen name="incoming_pad_loading_width">200dp</dimen>
+    <dimen name="incoming_pad_loading_height">200dp</dimen>
+    <dimen name="incoming_pad_loading_halo_width">200dp</dimen>
 </resources>

@@ -10,6 +10,9 @@ import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.SelfData;
 import org.dync.tv.teameeting.chatmessage.ChatMessageClient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Xiao_Bailong on 2016/3/30.
  */
@@ -18,11 +21,17 @@ public class TVAPP extends Application {
     private static TVAPP mTVAPP;
     private static SelfData mSelfData;
 
-
     private static TMMsgSender mMsgSender; //消息控制
     private static ChatMessageClient mChatMessageClient;
     private static Context context;
     private MeetingListEntity meetingListEntity;
+    private MeetingListEntity mMeetingListEntityInfo; //获取到的会议信息
+    private List<MeetingListEntity> mMeetingLists = new ArrayList<MeetingListEntity>();
+
+    public TVAPP() {
+        mTVAPP = this;
+    }
+
 
     @Override
     public void onCreate() {
@@ -47,6 +56,9 @@ public class TVAPP extends Application {
      * @return
      */
     public static TVAPP getmTVAPP() {
+        if (mTVAPP == null) {
+            mTVAPP = new TVAPP();
+        }
         return mTVAPP;
     }
 
@@ -58,6 +70,15 @@ public class TVAPP extends Application {
         this.meetingListEntity = meetingListEntity;
     }
 
+
+    public MeetingListEntity getmMeetingListEntityInfo() {
+        return mMeetingListEntityInfo;
+    }
+
+    public void setmMeetingListEntityInfo(MeetingListEntity mMeetingListEntityInfo) {
+        this.mMeetingListEntityInfo = mMeetingListEntityInfo;
+    }
+
     /**
      * get the device id unique
      *
@@ -67,15 +88,15 @@ public class TVAPP extends Application {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static TMMsgSender getMsgSender() {
+    public TMMsgSender getMsgSender() {
         return mMsgSender;
     }
 
-    public static ChatMessageClient getmChatMessageClient() {
+    public ChatMessageClient getmChatMessageClient() {
         return mChatMessageClient;
     }
 
-    public static Context getContext() {
+    public Context getContext() {
         return context;
     }
 
@@ -99,4 +120,45 @@ public class TVAPP extends Application {
         }
         return mSelfData.getAuthorization();
     }
+
+
+    public void setMeetingLists(List<MeetingListEntity> meetingLists) {
+        if (meetingLists != null) {
+            this.mMeetingLists.clear();
+            this.mMeetingLists = meetingLists;
+        }
+
+    }
+
+
+    public List<MeetingListEntity> getMeetingLists() {
+        return mMeetingLists;
+    }
+
+    /**
+     * 获取到的列表信息加到头部列表
+     */
+    public void addMeetingHeardEntity() {
+        if (mMeetingListEntityInfo != null) {
+            mMeetingListEntityInfo.setJointime(System.currentTimeMillis());
+            mMeetingLists.add(0, mMeetingListEntityInfo);
+        }
+    }
+
+    /**
+     * 返回MeetingID在当前列表当中的位置
+     * @param meetingId
+     * @return
+     */
+    public int getMeetingIdPosition(String meetingId) {
+
+        for (int i = 0; i < mMeetingLists.size(); i++) {
+            MeetingListEntity meetingListEntity = mMeetingLists.get(i);
+            if (meetingId.equals(meetingListEntity.getMeetingid())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }

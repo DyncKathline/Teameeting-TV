@@ -75,18 +75,13 @@ public class ChatMessageClient implements JMClientHelper {
 
     private void senMag(String msg) {
         Gson gson = new Gson();
+        //这里可以接受到入会。
         ReqSndMsgEntity reqSndMsgEntity = gson.fromJson(msg, ReqSndMsgEntity.class);
 
-        if (mDebug) {
-            //Log.e(TAG, reqSndMsgEntity.getFrom() + "-" + TeamMeetingApp.getTeamMeetingApp().getDevId());
+        if (reqSndMsgEntity.getTags() == JMClientType.MCCMD_ENTER) {
+            //进会通知；
+            notifyRequestMessage(reqSndMsgEntity);
         }
-
-        if (reqSndMsgEntity.getTags() == JMClientType.MCSENDTAGS_TALK) {
-            // CRUDChat.queryInsert(context, reqSndMsgEntity);
-        }
-
-        notifyRequestMessage(reqSndMsgEntity);
-
     }
 
 
@@ -127,7 +122,6 @@ public class ChatMessageClient implements JMClientHelper {
             Log.i(TAG, "OnMsgServerState: " + connStatus);
         }
     }
-
 
     public interface ChatMessageObserver {
         void OnReqSndMsg(ReqSndMsgEntity reqSndMsg);
