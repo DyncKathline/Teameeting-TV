@@ -253,7 +253,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
             case R.id.button13:
                 if (mMeetingListener != null) {
                     Message msg = new Message();
-                    msg.what = EventType.MSG_CALL_START.ordinal();
+                    msg.what = EventType.MSG_CALL_START.ordinal();//发送到CallRingFragment
                     EventBus.getDefault().post(msg);
                     mMeetingListener.onClick(phone);
                 }
