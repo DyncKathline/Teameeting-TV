@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/llayout"
+    android:id="@+id/llayout_meeting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="-340dp"
     android:gravity="center_vertical"
-    android:orientation="vertical"
-    tools:showIn="@layout/activity_main">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,8 +31,9 @@
                 android:text="我的号码："
                 android:textColor="@color/white"
                 android:textSize="18sp" />
+
             <TextView
-                android:id="@+id/tv_phone"
+                android:id="@+id/tv_meeting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="9698540"
@@ -86,11 +86,12 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/edit"
+                android:id="@+id/edt_meeting"
                 android:layout_width="210dp"
                 android:layout_height="70dp"
-                android:singleLine="true"
                 android:focusable="false"
+                android:singleLine="true"
+                android:text="4008083052"
                 android:textColor="@color/white" />
 
             <RelativeLayout
@@ -134,7 +135,6 @@
                             android:nextFocusLeft="@+id/button1"
                             android:nextFocusRight="@+id/button3"
                             android:nextFocusUp="@+id/button13"
-                            android:onClick="onClick"
                             android:text="2" />
 
                         <Button
@@ -144,7 +144,6 @@
                             android:nextFocusLeft="@+id/button2"
                             android:nextFocusRight="@+id/listView"
                             android:nextFocusUp="@+id/button13"
-                            android:onClick="onClick"
                             android:text="3" />
                     </LinearLayout>
 
@@ -160,7 +159,6 @@
                             android:nextFocusLeft="@+id/imageView"
                             android:nextFocusRight="@+id/button5"
                             android:nextFocusUp="@+id/button1"
-                            android:onClick="onClick"
                             android:text="4" />
 
                         <Button
@@ -170,7 +168,6 @@
                             android:nextFocusLeft="@+id/button4"
                             android:nextFocusRight="@+id/button6"
                             android:nextFocusUp="@+id/button2"
-                            android:onClick="onClick"
                             android:text="5" />
 
                         <Button
@@ -180,7 +177,6 @@
                             android:nextFocusLeft="@+id/button5"
                             android:nextFocusRight="@+id/listView"
                             android:nextFocusUp="@+id/button3"
-                            android:onClick="onClick"
                             android:text="6" />
                     </LinearLayout>
 
@@ -196,7 +192,6 @@
                             android:nextFocusLeft="@+id/imageView"
                             android:nextFocusRight="@+id/button8"
                             android:nextFocusUp="@+id/button4"
-                            android:onClick="onClick"
                             android:text="7" />
 
                         <Button
@@ -206,7 +201,6 @@
                             android:nextFocusLeft="@+id/button7"
                             android:nextFocusRight="@+id/button9"
                             android:nextFocusUp="@+id/button5"
-                            android:onClick="onClick"
                             android:text="8" />
 
                         <Button
@@ -216,7 +210,6 @@
                             android:nextFocusLeft="@+id/button8"
                             android:nextFocusRight="@+id/listView"
                             android:nextFocusUp="@+id/button6"
-                            android:onClick="onClick"
                             android:text="9" />
                     </LinearLayout>
 
@@ -232,7 +225,6 @@
                             android:nextFocusLeft="@+id/imageView"
                             android:nextFocusRight="@+id/button11"
                             android:nextFocusUp="@+id/button7"
-                            android:onClick="onClick"
                             android:text="清空" />
 
                         <Button
@@ -242,7 +234,6 @@
                             android:nextFocusLeft="@+id/button10"
                             android:nextFocusRight="@+id/button12"
                             android:nextFocusUp="@+id/button8"
-                            android:onClick="onClick"
                             android:text="0" />
 
                         <Button
@@ -252,7 +243,6 @@
                             android:nextFocusLeft="@+id/button11"
                             android:nextFocusRight="@+id/listView"
                             android:nextFocusUp="@+id/button9"
-                            android:onClick="onClick"
                             android:text="删除" />
                     </LinearLayout>
 
@@ -269,7 +259,6 @@
                             android:nextFocusLeft="@+id/imageView"
                             android:nextFocusRight="@+id/listView"
                             android:nextFocusUp="@+id/button12"
-                            android:onClick="onClick"
                             android:text="呼叫" />
                     </LinearLayout>
 
