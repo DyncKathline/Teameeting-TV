@@ -88,15 +88,15 @@ public class TVAPP extends Application {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static TMMsgSender getMsgSender() {
+    public TMMsgSender getMsgSender() {
         return mMsgSender;
     }
 
-    public static ChatMessageClient getmChatMessageClient() {
+    public ChatMessageClient getmChatMessageClient() {
         return mChatMessageClient;
     }
 
-    public static Context getContext() {
+    public Context getContext() {
         return context;
     }
 
@@ -120,4 +120,45 @@ public class TVAPP extends Application {
         }
         return mSelfData.getAuthorization();
     }
+
+
+    public void setMeetingLists(List<MeetingListEntity> meetingLists) {
+        if (meetingLists != null) {
+            this.mMeetingLists.clear();
+            this.mMeetingLists = meetingLists;
+        }
+
+    }
+
+
+    public List<MeetingListEntity> getMeetingLists() {
+        return mMeetingLists;
+    }
+
+    /**
+     * 获取到的列表信息加到头部列表
+     */
+    public void addMeetingHeardEntity() {
+        if (mMeetingListEntityInfo != null) {
+            mMeetingListEntityInfo.setJointime(System.currentTimeMillis());
+            mMeetingLists.add(0, mMeetingListEntityInfo);
+        }
+    }
+
+    /**
+     * 返回MeetingID在当前列表当中的位置
+     * @param meetingId
+     * @return
+     */
+    public int getMeetingIdPosition(String meetingId) {
+
+        for (int i = 0; i < mMeetingLists.size(); i++) {
+            MeetingListEntity meetingListEntity = mMeetingLists.get(i);
+            if (meetingId.equals(meetingListEntity.getMeetingid())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }

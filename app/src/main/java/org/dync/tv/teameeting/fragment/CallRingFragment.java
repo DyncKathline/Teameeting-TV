@@ -3,6 +3,7 @@ package org.dync.tv.teameeting.fragment;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,8 @@ import com.orhanobut.logger.Logger;
 
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.structs.EventType;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -38,6 +41,7 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     @Bind(R.id.btn_hungUp)
     public Button callHungUp;
 
+    private MediaPlayer mediaPlayer;
     private boolean isStartAnim = false;//是否关闭动画
     public Handler handler = new Handler() {
         @Override
@@ -98,21 +102,6 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
         callHungUp.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_accept:
-
-                break;
-            case R.id.btn_hungUp:
-                stopAnim();
-                if (mCallRingListener != null) {
-                    mCallRingListener.onClick();
-                }
-                break;
-        }
-    }
-
     public void startAnim() {
         isStartAnim = true;
         animset(LoadingHalo1);
@@ -125,16 +114,30 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     }
 
     @Override
-    public void onFocusChange(View v, boolean hasFocus) {
+    public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_accept:
 
                 break;
             case R.id.btn_hungUp:
                 if (mCallRingListener != null) {
-                    stopAnim();
+                    Message msg = new Message();
+                    msg.what = EventType.MSG_CALL_STOP.ordinal();//分别发送到CallRingFragment、MeetingFragment
+                    EventBus.getDefault().post(msg);
                     mCallRingListener.onClick();
                 }
+                break;
+        }
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch (v.getId()) {
+            case R.id.btn_accept:
+
+                break;
+            case R.id.btn_hungUp:
+
                 break;
         }
     }
@@ -150,16 +153,31 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
         mCallRingListener = listener;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        startAnim();
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        startAnim();
+//        callRingStart();
+//    }
+//
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        stopAnim();
+//        callRingStop();
+//    }
+
+    private void callRingStart() {
+        mediaPlayer = MediaPlayer.create(mContext, R.raw.incomingcall);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        stopAnim();
+    private void callRingStop() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
     }
 
     /**
@@ -171,9 +189,11 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
         switch (EventType.values()[msg.what]) {
             case MSG_CALL_START:
                 startAnim();
+                callRingStart();
                 break;
             case MSG_CALL_STOP:
                 stopAnim();
+                callRingStop();
                 break;
         }
     }

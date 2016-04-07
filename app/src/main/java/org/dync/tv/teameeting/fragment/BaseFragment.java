@@ -3,6 +3,7 @@ package org.dync.tv.teameeting.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,20 @@ public abstract class BaseFragment extends Fragment {
     public TVAPP mTVAPP;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mDebug)
+            Log.i(TAG, "onAttach");
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (mDebug)
+            Log.i(TAG, "onCreate");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(provideViewLayoutId(), container, false);
         ButterKnife.bind(this, view);
@@ -36,14 +51,70 @@ public abstract class BaseFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (mDebug)
+            Log.i(TAG, "onActivityCreated");
+    }
+
     protected abstract int provideViewLayoutId();
 
     protected abstract void init();
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (mDebug)
+            Log.i(TAG, "onStart");
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mDebug)
+            Log.i(TAG, "onResume");
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mDebug)
+            Log.i(TAG, "onPause");
+
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mDebug)
+            Log.i(TAG, "onStop");
+
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mDebug)
+            Log.i(TAG, "onDestroyView");
         ButterKnife.unbind(this);
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mDebug)
+            Log.i(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mDebug)
+            Log.i(TAG, "onDetach");
     }
 }
