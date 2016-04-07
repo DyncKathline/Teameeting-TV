@@ -88,15 +88,15 @@ public class TVAPP extends Application {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public TMMsgSender getMsgSender() {
+    public static TMMsgSender getMsgSender() {
         return mMsgSender;
     }
 
-    public ChatMessageClient getmChatMessageClient() {
+    public static ChatMessageClient getmChatMessageClient() {
         return mChatMessageClient;
     }
 
-    public Context getContext() {
+    public static Context getContext() {
         return context;
     }
 
@@ -119,29 +119,5 @@ public class TVAPP extends Application {
             new NullPointerException("Authorization的签证为空");
         }
         return mSelfData.getAuthorization();
-    }
-
-
-    public void setMeetingLists(List<MeetingListEntity> meetingLists) {
-        if (meetingLists != null) {
-            this.mMeetingLists.clear();
-            this.mMeetingLists = meetingLists;
-        }
-
-    }
-
-
-    public List<MeetingListEntity> getMeetingLists() {
-        return mMeetingLists;
-    }
-
-    /**
-     * 获取到的列表信息加到头部列表
-     */
-    public void addMeetingHeardEntity() {
-        if (mMeetingListEntityInfo != null) {
-            mMeetingListEntityInfo.setJointime(System.currentTimeMillis());
-            mMeetingLists.add(0, mMeetingListEntityInfo);
-        }
     }
 }

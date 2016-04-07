@@ -4,16 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/bg_zl"
     tools:context=".activity.MainActivity">
 
 
     <RelativeLayout
+        android:id="@+id/rlayout_videos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"></RelativeLayout>
 
+    <FrameLayout
+        android:id="@+id/flayout_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
 
-        <include layout="@layout/layout_meeting" />
-
-    </RelativeLayout>
 </RelativeLayout>
