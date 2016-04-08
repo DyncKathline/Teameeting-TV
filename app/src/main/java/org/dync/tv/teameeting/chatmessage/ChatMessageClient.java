@@ -1,7 +1,6 @@
 package org.dync.tv.teameeting.chatmessage;
 
 import android.content.Context;
-import android.os.Message;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
  * Created by zhulang on 2016/3/30
  */
 public class ChatMessageClient implements JMClientHelper {
-    private Message mMessage;
     private String TAG = this.getClass().getSimpleName();
     private boolean mDebug = TVAPP.mDebug;
     private ArrayList<ChatMessageObserver> mObServers = new ArrayList<ChatMessageObserver>();
@@ -78,8 +76,7 @@ public class ChatMessageClient implements JMClientHelper {
         //这里可以接受到入会。
         ReqSndMsgEntity reqSndMsgEntity = gson.fromJson(msg, ReqSndMsgEntity.class);
 
-        if (reqSndMsgEntity.getTags() == JMClientType.MCCMD_ENTER) {
-            //进会通知；
+        if (reqSndMsgEntity.getTags() == JMClientType.MCSENDTAGS_ENTER) {
             notifyRequestMessage(reqSndMsgEntity);
         }
     }

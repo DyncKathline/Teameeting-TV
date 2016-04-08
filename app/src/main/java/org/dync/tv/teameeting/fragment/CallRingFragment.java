@@ -4,9 +4,11 @@ package org.dync.tv.teameeting.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,9 +17,8 @@ import android.widget.LinearLayout;
 import com.orhanobut.logger.Logger;
 
 import org.dync.tv.teameeting.R;
+import org.dync.tv.teameeting.structs.BundleType;
 import org.dync.tv.teameeting.structs.EventType;
-
-import java.io.IOException;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -37,7 +38,7 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     @Bind(R.id.LoadingHalo4)
     public ImageView LoadingHalo4;
     @Bind(R.id.btn_accept)
-    public Button callAccept;
+    public Button btnAccept;
     @Bind(R.id.btn_hungUp)
     public Button callHungUp;
 
@@ -70,7 +71,7 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
 
     public void animset(View view) {
         if (isStartAnim) {
-            Logger.e("TAG", "动画开启中。。。。。");
+            //Log.e("TAG", "动画开启中。。。。。");
             ObjectAnimator animator1 = ObjectAnimator.ofFloat(view, "scaleX", 0.0f, 1.0f);
             ObjectAnimator animator2 = ObjectAnimator.ofFloat(view, "scaleY", 0.0f, 1.0f);
             ObjectAnimator animator3 = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0f);
@@ -92,13 +93,12 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
 
     @Override
     protected void init() {
-        startAnim();
         initListener();
     }
 
 
     private void initListener() {
-        callAccept.setOnClickListener(this);
+        btnAccept.setOnClickListener(this);
         callHungUp.setOnClickListener(this);
     }
 
@@ -117,14 +117,16 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_accept:
-
-                break;
-            case R.id.btn_hungUp:
                 if (mCallRingListener != null) {
                     Message msg = new Message();
                     msg.what = EventType.MSG_CALL_STOP.ordinal();//分别发送到CallRingFragment、MeetingFragment
                     EventBus.getDefault().post(msg);
-                    mCallRingListener.onClick();
+                    mCallRingListener.onClickAccept();
+                }
+                break;
+            case R.id.btn_hungUp:
+                if (mCallRingListener != null) {
+                    mCallRingListener.onClickHungUp();
                 }
                 break;
         }
@@ -143,7 +145,8 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     }
 
     public interface CallRingListener {
-        void onClick();
+        void onClickHungUp();
+        void onClickAccept();
     }
 
     private CallRingListener mCallRingListener;
@@ -153,22 +156,23 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
         mCallRingListener = listener;
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        startAnim();
-//        callRingStart();
-//    }
-//
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        stopAnim();
-//        callRingStop();
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 
     private void callRingStart() {
+
+        if (mediaPlayer != null) {
+            mediaPlayer.reset();
+        }
         mediaPlayer = MediaPlayer.create(mContext, R.raw.incomingcall);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
@@ -188,6 +192,14 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     public void onEventMainThread(Message msg) {
         switch (EventType.values()[msg.what]) {
             case MSG_CALL_START:
+                Log.e(TAG, "onEventMainThread: 暂停");
+                Bundle data = msg.getData();
+                boolean isReceive = data.getBoolean(BundleType.IS_RECEIVED);
+                if (isReceive) {
+                    btnAccept.setVisibility(View.VISIBLE);
+                } else {
+                    btnAccept.setVisibility(View.GONE);
+                }
                 startAnim();
                 callRingStart();
                 break;
