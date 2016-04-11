@@ -4,7 +4,10 @@
     android:id="@+id/llayout_meeting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:layout_marginTop="20dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginBottom="40dp"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
@@ -14,13 +17,15 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="320dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:textColor="@color/white" />
 
         <LinearLayout
-            android:layout_width="210dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:orientation="horizontal">
@@ -30,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="我的号码："
                 android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textSize="@dimen/textsize" />
 
             <TextView
                 android:id="@+id/tv_meeting"
@@ -38,16 +43,17 @@
                 android:layout_height="wrap_content"
                 android:text="9698540"
                 android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textSize="@dimen/textsize" />
         </LinearLayout>
 
         <TextView
-            android:layout_width="150dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.75"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="最近通话"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="@dimen/textsize" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,23 +62,24 @@
         android:orientation="horizontal">
 
         <RelativeLayout
-            android:layout_width="0"
+            android:id="@+id/rlayout_image"
+            android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="420dp"
+            android:layout_height="match_parent"
             android:layout_margin="10dp">
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="320dp"
-                android:layout_height="420dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@mipmap/logo"
                 android:focusable="true"
                 android:nextFocusRight="@+id/button1" />
 
             <ImageView
                 android:id="@+id/scaleImageView"
-                android:layout_width="320dp"
-                android:layout_height="420dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/shape_image_border" />
@@ -80,20 +87,22 @@
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/llayout_control"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:background="@drawable/shape_corners_bg"
             android:orientation="vertical">
 
             <EditText
                 android:id="@+id/edt_meeting"
-                android:layout_width="210dp"
+                android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:focusable="false"
                 android:singleLine="true"
                 android:text="4008083052"
+                android:textSize="@dimen/textsize"
                 android:textColor="@color/white" />
 
             <RelativeLayout
@@ -103,8 +112,8 @@
 
                 <ImageButton
                     android:id="@+id/imageButton"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@null"
                     android:src="@drawable/shape_cursor_bg" />
@@ -112,13 +121,14 @@
                 <LinearLayout
                     android:id="@+id/btnllayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <Button
@@ -151,7 +161,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <Button
@@ -184,7 +195,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <Button
@@ -217,7 +229,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <Button
@@ -250,13 +263,14 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/button13"
                             style="@style/ButtonStyle"
-                            android:background="@null"
+                            android:background="@drawable/selector_btn_cancle"
                             android:nextFocusDown="@+id/button1"
                             android:nextFocusLeft="@+id/imageView"
                             android:nextFocusRight="@+id/listView"
@@ -271,10 +285,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_list"
+            android:id="@+id/llayout_list"
             android:layout_width="0dp"
             android:layout_weight="0.75"
-            android:layout_height="420dp"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:background="@drawable/shape_corners_bg"
             android:orientation="vertical">
@@ -285,6 +299,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:focusable="true"
+                android:divider="@null"
                 android:nextFocusLeft="@+id/button3" />
 
         </LinearLayout>

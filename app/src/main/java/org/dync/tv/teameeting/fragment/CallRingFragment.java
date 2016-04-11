@@ -34,8 +34,6 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     public ImageView LoadingHalo3;
     @Bind(R.id.LoadingHalo4)
     public ImageView LoadingHalo4;
-    @Bind(R.id.btn_accept)
-    public Button btnAccept;
     @Bind(R.id.btn_hungUp)
     public Button callHungUp;
 
@@ -95,7 +93,6 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
 
 
     private void initListener() {
-        btnAccept.setOnClickListener(this);
         callHungUp.setOnClickListener(this);
     }
 
@@ -127,9 +124,6 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         switch (v.getId()) {
-            case R.id.btn_accept:
-
-                break;
             case R.id.btn_hungUp:
 
                 break;

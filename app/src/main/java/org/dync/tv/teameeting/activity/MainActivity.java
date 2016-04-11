@@ -149,6 +149,14 @@ public class MainActivity extends BaseMeetingActivity {
 
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (mMeetingFragment != null){
+            mMeetingFragment.initMeetingFragmentLayout();
+        }
+    }
+
     /**
      * 加入会议
      *
