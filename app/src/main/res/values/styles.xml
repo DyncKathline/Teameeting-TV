@@ -12,11 +12,11 @@
 
     <style name="ButtonStyle">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:focusable">true</item>
         <item name="android:textColor">#FFF</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/textsize</item>
         <item name="android:onClick">onClick</item>
         <item name="android:background">@null</item>
     </style>
@@ -29,6 +29,14 @@
         <item name="android:layout_weight">1</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:textColor">#ffffff</item>
+    </style>
+    
+    <style name="LoadingHalo">
+        <item name="android:layout_width">@dimen/incoming_pad_loading_halo_width</item>
+        <item name="android:layout_height">@dimen/incoming_pad_loading_halo_width</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:alpha">0</item>
+        <item name="android:background">@drawable/shape_call_halo_ring</item>
     </style>
 
 </resources>
