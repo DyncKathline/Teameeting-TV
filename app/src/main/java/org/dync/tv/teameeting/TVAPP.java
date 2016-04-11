@@ -149,6 +149,18 @@ public class TVAPP extends Application {
     }
 
     /**
+     *
+     */
+    public void addMeetingHeardEntityPosition(int position) {
+        if (position >= 0) {
+            MeetingListEntity meetingListEntity = mMeetingLists.get(position);
+            mMeetingLists.remove(position);
+            meetingListEntity.setJointime(System.currentTimeMillis());
+            mMeetingLists.add(0, meetingListEntity);
+        }
+    }
+
+    /**
      * 返回MeetingID在当前列表当中的位置
      *
      * @param meetingId
@@ -167,6 +179,7 @@ public class TVAPP extends Application {
 
     /**
      * 根据MeetingId获取到会议室信息；
+     *
      * @param meetingId
      * @return
      */

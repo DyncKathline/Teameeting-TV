@@ -4,7 +4,6 @@ package org.dync.tv.teameeting.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -17,11 +16,9 @@ import android.widget.LinearLayout;
 import com.orhanobut.logger.Logger;
 
 import org.dync.tv.teameeting.R;
-import org.dync.tv.teameeting.structs.BundleType;
 import org.dync.tv.teameeting.structs.EventType;
 
 import butterknife.Bind;
-import de.greenrobot.event.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -115,17 +112,12 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
-            case R.id.btn_accept:
-                if (mCallRingListener != null) {
-                    Message msg = new Message();
-                    msg.what = EventType.MSG_CALL_STOP.ordinal();//分别发送到CallRingFragment、MeetingFragment
-                    EventBus.getDefault().post(msg);
-                    mCallRingListener.onClickAccept();
-                }
-                break;
             case R.id.btn_hungUp:
                 if (mCallRingListener != null) {
+                    stopAnim();
+                    callRingStop();
                     mCallRingListener.onClickHungUp();
                 }
                 break;
@@ -146,7 +138,6 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
 
     public interface CallRingListener {
         void onClickHungUp();
-        void onClickAccept();
     }
 
     private CallRingListener mCallRingListener;
@@ -193,13 +184,6 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
         switch (EventType.values()[msg.what]) {
             case MSG_CALL_START:
                 Log.e(TAG, "onEventMainThread: 暂停");
-                Bundle data = msg.getData();
-                boolean isReceive = data.getBoolean(BundleType.IS_RECEIVED);
-                if (isReceive) {
-                    btnAccept.setVisibility(View.VISIBLE);
-                } else {
-                    btnAccept.setVisibility(View.GONE);
-                }
                 startAnim();
                 callRingStart();
                 break;

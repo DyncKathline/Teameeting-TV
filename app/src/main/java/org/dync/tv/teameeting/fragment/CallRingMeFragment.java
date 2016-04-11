@@ -4,7 +4,6 @@ package org.dync.tv.teameeting.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.widget.LinearLayout;
 import com.orhanobut.logger.Logger;
 
 import org.dync.tv.teameeting.R;
-import org.dync.tv.teameeting.structs.BundleType;
 import org.dync.tv.teameeting.structs.EventType;
 
 import butterknife.Bind;
@@ -88,7 +86,7 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
 
     @Override
     protected int provideViewLayoutId() {
-        return R.layout.fragment_call_ring;
+        return R.layout.fragment_call_ring_me;
     }
 
     @Override
@@ -115,18 +113,20 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
 
     @Override
     public void onClick(View v) {
+        Message msg = Message.obtain();
         switch (v.getId()) {
             case R.id.btn_accept:
-                if (mCallRingListener != null) {
-                    Message msg = new Message();
-                    msg.what = EventType.MSG_CALL_STOP.ordinal();//分别发送到CallRingFragment、MeetingFragment
+                if (mCallRingMeListener != null) {
+                    msg.what = EventType.MSG_CALL_ME_STOP.ordinal();//分别发送到CallRingFragment、MeetingFragment
                     EventBus.getDefault().post(msg);
-                    mCallRingListener.onClickAccept();
+                    mCallRingMeListener.onClickAccept();
                 }
                 break;
             case R.id.btn_hungUp:
-                if (mCallRingListener != null) {
-                    mCallRingListener.onClickHungUp();
+                if (mCallRingMeListener != null) {
+                    msg.what = EventType.MSG_CALL_ME_STOP.ordinal();//分别发送到CallRingFragment、MeetingFragment
+                    EventBus.getDefault().post(msg);
+                    mCallRingMeListener.onClickHungUp();
                 }
                 break;
         }
@@ -144,16 +144,17 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
         }
     }
 
-    public interface CallRingListener {
+    public interface CallRingMeListener {
         void onClickHungUp();
+
         void onClickAccept();
     }
 
-    private CallRingListener mCallRingListener;
+    private CallRingMeListener mCallRingMeListener;
 
-    public void setOnCallRingListener(CallRingListener listener) {
+    public void setOnCallRingListener(CallRingMeListener listener) {
         Logger.e("Listener= " + listener);
-        mCallRingListener = listener;
+        mCallRingMeListener = listener;
     }
 
     @Override
@@ -191,19 +192,12 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
      */
     public void onEventMainThread(Message msg) {
         switch (EventType.values()[msg.what]) {
-            case MSG_CALL_START:
+            case MSG_CALL_ME_START:
                 Log.e(TAG, "onEventMainThread: 暂停");
-                Bundle data = msg.getData();
-                boolean isReceive = data.getBoolean(BundleType.IS_RECEIVED);
-                if (isReceive) {
-                    btnAccept.setVisibility(View.VISIBLE);
-                } else {
-                    btnAccept.setVisibility(View.GONE);
-                }
                 startAnim();
                 callRingStart();
                 break;
-            case MSG_CALL_STOP:
+            case MSG_CALL_ME_STOP:
                 stopAnim();
                 callRingStop();
                 break;

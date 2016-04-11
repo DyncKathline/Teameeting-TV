@@ -416,13 +416,13 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             if (size == 0) {
                 //remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, 0,5, 44, 51, 36);
             } else if (size == 1) {
-                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 44 , 5, 51, 59);
+                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 3 , 2, 30, 30);
                 remoteRender.mView.setZOrderMediaOverlay(true);
             } else if (size == 2) {
-                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 47,62, 21, 30);
+                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 2,35, 30, 30);
                 remoteRender.mView.setZOrderMediaOverlay(true);
             } else if (size == 3) {
-                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 71, 62 , 21, 30);
+                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 2, 67 , 30, 30);
                 remoteRender.mView.setZOrderMediaOverlay(true);
             }
 
@@ -467,7 +467,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     public void OnRtcOpenLocalRender(VideoTrack localTrack) {
         int size = GetVideoRenderSize();
         if (size == 0) {
-            mLocalRender  = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, 0,5, 41, 34, 54);
+            mLocalRender  = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, 0,0, 0, 100, 100);
         } else {
             mLocalRender = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, size, (100 - size * (SUB_WIDTH + SUB_X)), SUB_Y, SUB_WIDTH, SUB_HEIGHT);
             mLocalRender.mView.setZOrderMediaOverlay(true);

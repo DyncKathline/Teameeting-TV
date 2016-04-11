@@ -39,9 +39,6 @@ public abstract class BaseMeetingActivity extends BaseActivity implements MeetEv
         mAnyrtcViews.setOnPeopleChangeListener(peopleChangeListener);
     }
 
-    public void joinMeet(MeetingListEntity meetingListEntity) {
-
-    }
 
 
     @Override
