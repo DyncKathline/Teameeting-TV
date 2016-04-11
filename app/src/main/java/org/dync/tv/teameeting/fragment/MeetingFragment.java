@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.ScaleAnimation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -15,10 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
+import org.anyrtc.AnyrtcMeet;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.adapter.RoomListAdapter;
@@ -94,10 +95,8 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     private int duration = 0;//光标移动的时长
     private RoomListAdapter adapter;
     public List<MeetingListEntity> mMeetingLists;
+    AnyrtcMeet mAnyrtcMeet;
 
-    public MeetingFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     protected int provideViewLayoutId() {
@@ -106,11 +105,12 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
 
     @Override
     protected void init() {
+
         drawBeforeGetSize();
         initListener();
         initData();
-
         requestFocus();
+
     }
 
     public void requestFocus() {
@@ -118,14 +118,28 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     }
 
     private void initData() {
-        //获取会议ID
         meetingTextView.setText(TVAPP.getmTVAPP().getMeetingListEntity().getMeetingid());
-        //模拟数据
+
         mMeetingLists = TVAPP.getmTVAPP().getMeetingLists();
         adapter = new RoomListAdapter(mMeetingLists, mContext);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        listView.setOnItemClickListener(listItemListener);
     }
+
+    AdapterView.OnItemClickListener listItemListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //进入会议;
+            MeetingListEntity meeting = mMeetingLists.get(position);
+            //单机列表进入会议;
+            if (mMeetingListener != null) {
+                Log.e(TAG, "onClick: ");
+                mMeetingListener.onClickCall(meeting.getMeetingid());
+            }
+
+        }
+    };
 
     /**
      * 在画控件之前获取到控件的宽高
@@ -252,10 +266,11 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 break;
             case R.id.button13:
                 if (mMeetingListener != null) {
-                    Message msg = new Message();
-                    msg.what = EventType.MSG_CALL_START.ordinal();//发送到CallRingFragment
+                    Log.e(TAG, "onClick: ");
+                    mMeetingListener.onClickCall(phone);
+                    Message msg = Message.obtain();
+                    msg.what = EventType.MSG_CALL_START.ordinal();//分别发送到CallRingFragment、MeetingFragment
                     EventBus.getDefault().post(msg);
-                    mMeetingListener.onClick(phone);
                 }
                 break;
             case R.id.listView:
@@ -266,7 +281,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     }
 
     public interface MeetingListener {
-        void onClick(String phone);
+        void onClickCall(String phone);
     }
 
     private MeetingListener mMeetingListener;
@@ -440,119 +455,20 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     }
 
     /**
-     * 输入会议号码进入房间
-     */
-    public void enterMeeting(String meetNumId) {
-        /**
-         *
-         * 判断格式是否合法;
-         *
-         * 1.获取到房间信息.
-         *
-         * 2.判断是否可以加入：1.私密 2.当前的会议已经被删除
-         *
-         * 3.插入列表，并进入房间: 更新列表中的位置
-         *
-         *  都提示弹出通话动画的窗口
-         */
-
-        mNetWork.getMeetingInfo(meetNumId);
-
-
-    }
-
-    /***
-     * 遥控器单机列表进入房间
-     *
-     * @param position
-     */
-    public void enterListMeeting(String position) {
-        /**
-         * 1. 直接进入
-         * 2.更新列表中的位置
-         */
-
-    }
-
-    /**
-     * 获取到会议信息成功
-     *
-     * @param msg
-     */
-    private void getMeetingInfoSuccess(Message msg) {
-
-        MeetingListEntity meetingListEntityInfo = mTVAPP.getmMeetingListEntityInfo();
-        int usable = meetingListEntityInfo.getMeetenable();
-        String meetinId = meetingListEntityInfo.getMeetingid();
-        int position = mTVAPP.getMeetingIdPosition(meetinId);
-        if (mDebug)
-            Log.e(TAG, "getMeetingInfoSuccess: ------position" + position);
-        switch (usable) {
-            case 0:
-                /**
-                 * 会议已经被删除；
-                 */
-                Toast.makeText(mContext, R.string.str_meeting_deleted, Toast.LENGTH_SHORT).show();
-                break;
-            case 1:
-                if (position < 0) {
-                    mNetWork.insertUserMeetingRoom(mTVAPP.getAuthorization(), meetinId);
-                } else {
-//                    joinMeet(meetingListEntityInfo);
-                }
-                break;
-            case 2://private
-                if (position < 0) {
-                    Toast.makeText(mContext, R.string.str_meeting_privated, Toast.LENGTH_SHORT).show();
-                } else {
-//                    joinMeet(meetingListEntityInfo);
-                }
-                break;
-        }
-
-    }
-
-    /**
-     * 插入会议成功
-     */
-    private void insertMeetingSuccess() {
-        //adapter.notifyDataSetChanged();
-//        enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
-    }
-
-    /**
      * EeventBus方法
      *
      * @param msg
      */
     public void onEventMainThread(Message msg) {
         switch (EventType.values()[msg.what]) {
-            case MSG_RESPONS_ESTR_NULl:
+            case MSG_CALL_START:
                 if (mDebug)
-                    Log.e(TAG, "onEventMainThread:请求网络失败 ");
+                    Log.e(TAG, "onEventMainThread: 暂停");
                 break;
-            case MSG_GET_MEETING_INFO_SUCCESS:
-                if (mDebug)
-                    Log.e(TAG, "MSG_GET_MEETING_INFO_SUCCESS--获取用户列表成功");
-                getMeetingInfoSuccess(msg);
-                break;
-
-            case MSG_GET_ROOM_LIST_SUCCESS:
-                if (mDebug) {
-                    Log.e(TAG, "onEventMainThread: --获取列表成功");
-                }
-                break;
-
-            case MSG_INSERT_USER_MEETING_ROOM_SUCCESS:
-                if (mDebug)
-                    Log.e(TAG, "onEventMainThread: --列表成功");
-                insertMeetingSuccess();
-                break;
-            case MSG_UP_DATE_USER_MEETING_JOIN_TIME_SUCCESS:
-                if (mDebug)
-                    Log.e(TAG, "onEventMainThread: --更新时间成功");
-                //adapter.notifyDataSetChanged();
-                break;
+            case MSG_NOTIFY_DATA_CHANGE:
+                //列表数据改变
+                mMeetingLists = mTVAPP.getMeetingLists();
+                adapter.notifyDataSetChanged();
             case MSG_CALL_STOP:
                 requestFocus();
                 break;

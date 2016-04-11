@@ -24,7 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean mDebug = TVAPP.mDebug;
     public String TAG = this.getClass().getSimpleName();
     private ChatMessageClient mChatMessageClinet;
-    public Context context;
+    public Context mContext;
     public NetWork mNetWork;
     public TVAPP mTVAPP;
 
@@ -34,7 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(provideContentViewId());
         ButterKnife.bind(this);
-        context = this;
+        mContext = this;
         EventBus.getDefault().register(this);
         mNetWork = new NetWork();
         mTVAPP = TVAPP.getmTVAPP();

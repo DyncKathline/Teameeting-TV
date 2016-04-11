@@ -5,4 +5,5 @@ package org.dync.tv.teameeting.structs;
  */
 public class BundleType {
     public final static String PUT_STRING_INFO = "put_string_info";
+    public final static String IS_RECEIVED="is_received";
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.provider.Settings;
 
 import org.anyrtc.Anyrtc;
+import org.anyrtc.common.MeetEvents;
 import org.dync.teameeting.sdkmsgclient.msgs.TMMsgSender;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.SelfData;
@@ -21,6 +22,8 @@ public class TVAPP extends Application {
     private static TVAPP mTVAPP;
     private static SelfData mSelfData;
 
+
+    private MeetEvents meetEvents;
     private static TMMsgSender mMsgSender; //消息控制
     private static ChatMessageClient mChatMessageClient;
     private static Context context;
@@ -146,7 +149,20 @@ public class TVAPP extends Application {
     }
 
     /**
+     *
+     */
+    public void addMeetingHeardEntityPosition(int position) {
+        if (position >= 0) {
+            MeetingListEntity meetingListEntity = mMeetingLists.get(position);
+            mMeetingLists.remove(position);
+            meetingListEntity.setJointime(System.currentTimeMillis());
+            mMeetingLists.add(0, meetingListEntity);
+        }
+    }
+
+    /**
      * 返回MeetingID在当前列表当中的位置
+     *
      * @param meetingId
      * @return
      */
@@ -161,4 +177,21 @@ public class TVAPP extends Application {
         return -1;
     }
 
+    /**
+     * 根据MeetingId获取到会议室信息；
+     *
+     * @param meetingId
+     * @return
+     */
+    public MeetingListEntity getMeetingIdtoEntity(String meetingId) {
+
+        for (int i = 0; i < mMeetingLists.size(); i++) {
+            MeetingListEntity meetingListEntity = mMeetingLists.get(i);
+            if (meetingId.equals(meetingListEntity.getMeetingid())) {
+                return meetingListEntity;
+            }
+        }
+
+        return null;
+    }
 }
