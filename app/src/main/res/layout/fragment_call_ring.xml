@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/llayout_call_ring"
-    android:layout_width="@dimen/incoming_pad_loading_width"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -81,7 +81,9 @@
         android:text="接通"
         android:nextFocusDown="@+id/btn_hungUp"
         android:onClick="onClick"
-        android:textSize="33sp" />
+        android:textSize="33sp"
+        android:visibility="gone"
+        />
 
     <Button
         android:id="@+id/btn_hungUp"
