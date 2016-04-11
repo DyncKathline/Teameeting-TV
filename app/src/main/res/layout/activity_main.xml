@@ -10,12 +10,56 @@
     <RelativeLayout
         android:id="@+id/rlayout_videos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@mipmap/bg_default"></RelativeLayout>
+        android:layout_height="match_parent"></RelativeLayout>
 
     <FrameLayout
         android:id="@+id/flayout_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+
+        <LinearLayout
+            android:id="@+id/llayout_control"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_full_screen"
+                style="@style/btn_control"
+                android:drawableTop="@mipmap/video_full_normal"
+                android:text="全屏" />
+
+            <Button
+                android:id="@+id/btn_video_soundon"
+                style="@style/btn_control"
+
+                android:drawableTop="@mipmap/video_soundon_normal"
+                android:text="静音" />
+
+            <Button
+                android:id="@+id/btn_hangup"
+                style="@style/btn_control"
+                android:drawableTop="@mipmap/video_hangup_normal"
+                android:text="挂断" />
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
