@@ -5,7 +5,6 @@ import android.util.Log;
 import com.loopj.android.http.RequestParams;
 import com.orhanobut.logger.Logger;
 
-import org.apache.http.Header;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingList;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
@@ -167,7 +166,7 @@ public class NetWork {
                         long jointime = jsonObject.getLong("jointime");
                         List<MeetingListEntity> meetingLists = TVAPP.getmTVAPP().getMeetingLists();
                         int position = TVAPP.getmTVAPP().getMeetingIdPosition(meetingid);
-                        if (position<0)
+                        if (position < 0)
                             new NullPointerException("更新房间的位置不对");
                         MeetingListEntity meetingListEntity = meetingLists.get(position);
                         meetingListEntity.setJointime(jointime);
@@ -183,6 +182,34 @@ public class NetWork {
                 bundle.putString("message", message);
                 msg.setData(bundle);
                 EventBus.getDefault().post(msg);
+            }
+        });
+    }
+
+    /**
+     * signOut
+     *
+     * @param sign
+     */
+    public void signOut(final String sign) {
+        String url = "users/signout";
+        RequestParams params = new RequestParams();
+        params.put("sign", sign);
+        HttpContent.post(url, params, new TmTextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, int code, String message, String responseString) {
+                if (mDebug)
+                    Log.e(TAG, "onSuccess: signOut" + responseString);
+                if (code == 200) {
+                    msg.what = EventType.MSG_SIGNOUT_SUCCESS.ordinal();
+                } else {
+                    msg.what = EventType.MSG_SIGNOUT_FAILED.ordinal();
+                }
+
+                bundle.putString("message", message);
+                msg.setData(bundle);
+                EventBus.getDefault().post(msg);
+
             }
         });
     }
