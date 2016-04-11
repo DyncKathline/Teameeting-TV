@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.dync.tv.teameeting.R;
@@ -59,7 +60,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     @Bind(R.id.pbar_wait)
     ProgressBar pbarWait;
     @Bind(R.id.rlayout_call_wait)
-    LinearLayout rLayoutWait;
+    RelativeLayout rLayoutWait;
 
     /**
      * 有人进会回调该方法;
