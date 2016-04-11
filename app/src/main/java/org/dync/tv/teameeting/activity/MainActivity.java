@@ -121,6 +121,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 Log.e(TAG, "onClickCall: ----呼叫");
                 // 拨号上网.
                 lLayoutControl.show();
+                bntFullScreen.requestFocus();
                 enterMeeting(phone);
                 hideAllContent();
                 //switchContent(mMeetingFragment, mCallRingFragment, TAG_FRAG_CALL);

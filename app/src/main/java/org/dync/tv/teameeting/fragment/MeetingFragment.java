@@ -142,12 +142,12 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+            parent.setFocusable(true);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            parent.setFocusable(false);
         }
     };
 
