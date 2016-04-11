@@ -139,6 +139,19 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         }
     };
 
+    AdapterView.OnItemSelectedListener selectedListener = new AdapterView.OnItemSelectedListener(){
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
     /**
      * 在画控件之前获取到控件的宽高
      */
@@ -436,10 +449,10 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 if (imageButton != null) {
                     if (hasFocus) {
                         imageButton.setVisibility(View.GONE);
-                        button13.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+//                        button13.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     } else {
                         imageButton.setVisibility(View.VISIBLE);
-                        button13.setBackgroundColor(getResources().getColor(R.color.transparent));
+//                        button13.setBackgroundColor(getResources().getColor(R.color.transparent));
                     }
                 }
                 duration = 0;
