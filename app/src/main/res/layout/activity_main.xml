@@ -41,7 +41,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="invisible"
+            >
 
             <Button
                 android:id="@+id/btn_full_screen"
@@ -65,7 +67,9 @@
     <RelativeLayout
         android:id="@+id/rlayout_call_wait"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        >
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
