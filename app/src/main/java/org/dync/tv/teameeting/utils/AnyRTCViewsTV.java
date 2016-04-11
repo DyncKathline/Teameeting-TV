@@ -439,9 +439,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
                 SwitchViewToFullscreen(remoteRender, mLocalRender);
             }
 
-            if (mRemoteRenders.size() > 0) {
-                peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
-            }
+            peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
     }
 
@@ -456,10 +454,16 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             if (mRemoteRenders.size() > 1 && remoteRender.index < mRemoteRenders.size()) {
                 BubbleSortSubView(remoteRender);
             }
+
+            mVideoView.removeView(remoteRender.mLayout);
+
             remoteRender.close();
             mVideoView.removeView(remoteRender.mLayout);
             mRemoteRenders.remove(peerId);
             remoteRender = null;
+
+
+            peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
     }
 
@@ -491,6 +495,8 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             mVideoView.removeView(mLocalRender.mLayout);
             mLocalRender = null;
         }
+
+
     }
 
     @Override

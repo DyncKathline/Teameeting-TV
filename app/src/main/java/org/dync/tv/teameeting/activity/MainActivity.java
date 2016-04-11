@@ -6,11 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.dync.tv.teameeting.R;
+import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.ReqSndMsgEntity;
 import org.dync.tv.teameeting.fragment.CallRingFragment;
@@ -18,11 +23,12 @@ import org.dync.tv.teameeting.fragment.CallRingMeFragment;
 import org.dync.tv.teameeting.fragment.MeetingFragment;
 import org.dync.tv.teameeting.structs.EventType;
 import org.dync.tv.teameeting.structs.MeetType;
+import org.dync.tv.teameeting.view.RoomControls;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 
-public class MainActivity extends BaseMeetingActivity {
+public class MainActivity extends BaseMeetingActivity implements View.OnClickListener {
     private FragmentManager fm;
     private Fragment mContent;//显示当前的Fragment
     private MeetingFragment mMeetingFragment;
@@ -37,15 +43,24 @@ public class MainActivity extends BaseMeetingActivity {
     private MeetingListEntity meetingListEntity;
     private MeetingListEntity joinMeetistEntity;
     private int meetType = MeetType.MEET_NO_EXIST;  //默认不在会议
+    private long mExitTime = 0;
+
+    public boolean isLocaVideoFlag = true;
+    public boolean isLocaAudioFlag = true;
+    public boolean isLocaScreenFlag = true;
 
     @Bind(R.id.llayout_control)
-    LinearLayout lLayoutControl;
+    RoomControls lLayoutControl;
     @Bind(R.id.btn_full_screen)
     Button bntFullScreen;
-    @Bind(R.id.btn_video_soundon)
-    Button btnVideoSoundon;
-    @Bind(R.id.btn_hangup)
-    Button btnHangup;
+    @Bind(R.id.btn_audio_soundon)
+    Button btnAudioSoundon;
+    @Bind(R.id.btn_main_hangup)
+    Button btnMainHangup;
+    @Bind(R.id.pbar_wait)
+    ProgressBar pbarWait;
+    @Bind(R.id.rlayout_call_wait)
+    RelativeLayout rLayoutWait;
 
     /**
      * 有人进会回调该方法;
@@ -60,9 +75,10 @@ public class MainActivity extends BaseMeetingActivity {
             //没有入会
             meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
             switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //打开接通或者取消的按钮
-        } else if (MeetType.MEET_EXIST == meetType) {
-            if (joinMeetistEntity.getMeetingid().equals(meetingListEntity.getMeetingid())) {
 
+        } else if (MeetType.MEET_EXIST == meetType) {
+            if (joinMeetistEntity != null && joinMeetistEntity.getMeetingid().equals(meetingListEntity.getMeetingid())) {
+                return;
             } else {
                 //有人进入其他会议,;
                 meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
@@ -79,7 +95,7 @@ public class MainActivity extends BaseMeetingActivity {
         if (isRecenived) {
             msg.what = EventType.MSG_CALL_ME_START.ordinal();//发送到CallRingMeFragment
         } else {
-            msg.what = EventType.MSG_CALL_START.ordinal();
+            //msg.what = EventType.MSG_CALL_START.ordinal();
         }
 
         EventBus.getDefault().post(msg);
@@ -96,13 +112,18 @@ public class MainActivity extends BaseMeetingActivity {
     }
 
     private void initListener() {
+        bntFullScreen.setOnClickListener(this);
+        btnMainHangup.setOnClickListener(this);
+        btnAudioSoundon.setOnClickListener(this);
         mMeetingFragment.setOnMeetingListener(new MeetingFragment.MeetingListener() {
             @Override
             public void onClickCall(String phone) {
                 Log.e(TAG, "onClickCall: ----呼叫");
                 // 拨号上网.
+                lLayoutControl.show();
                 enterMeeting(phone);
-                switchContent(mMeetingFragment, mCallRingFragment, TAG_FRAG_CALL);
+                hideAllContent();
+                //switchContent(mMeetingFragment, mCallRingFragment, TAG_FRAG_CALL);
                 sendPostCall(false);
             }
         });
@@ -113,6 +134,7 @@ public class MainActivity extends BaseMeetingActivity {
         mCallRingFragment.setOnCallRingListener(new CallRingFragment.CallRingListener() {
             @Override
             public void onClickHungUp() {
+
                 if (meetType == MeetType.MEET_EXIST) {
                     hideAllContent(); //影藏全部
                 } else {
@@ -139,7 +161,6 @@ public class MainActivity extends BaseMeetingActivity {
 
             @Override
             public void onClickAccept() {
-
                 // switchContent(mMeetingFragment, 0);
                 hideAllContent(); //影藏全部
                 joinAnyrtcMeet(meetingListEntity);
@@ -164,6 +185,7 @@ public class MainActivity extends BaseMeetingActivity {
      */
     private void joinAnyrtcMeet(MeetingListEntity meetingListEntity) {
         if (meetingListEntity != null) {
+            Log.e(TAG, "joinAnyrtcMeet: ");
             boolean join;
             if (meetType == MeetType.MEET_NO_EXIST) {
                 //第一次入会
@@ -175,6 +197,7 @@ public class MainActivity extends BaseMeetingActivity {
 
             if (join == true) {
                 meetType = MeetType.MEET_EXIST;
+                lLayoutControl.show();
                 joinMeetistEntity = meetingListEntity;
             } else {
                 meetType = MeetType.MEET_NO_EXIST;
@@ -184,19 +207,56 @@ public class MainActivity extends BaseMeetingActivity {
 
     /**
      * 挂断的方法
-     *
-     * @param meetingListEntity
      */
-    private void destoryJoinMeet(MeetingListEntity meetingListEntity) {
+    private void destoryJoinMeet() {
         if (meetType == MeetType.MEET_EXIST) {
+            joinMeetistEntity = null;
             mAnyrtcMeet.SwitchRoom(000000000 + "");
-            meetType = MeetType.MEET_NO_EXIST;
+            meetType = MeetType.MEET_EXIST;
 
         } else {
 
+        }
+        lLayoutControl.hide();
+        switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
+    }
 
+
+    public void setLocalVideoEnabled() {
+        if (isLocaVideoFlag) {
+            mAnyrtcMeet.SetLocalVideoEnabled(false);
+
+        } else {
+
+            mAnyrtcMeet.SetLocalVideoEnabled(true);
+        }
+    }
+
+    /**
+     * 设置音频按钮
+     */
+    public void setLocalAudioEnabled() {
+        if (isLocaAudioFlag) {
+            mAnyrtcMeet.SetLocalAudioEnabled(false);
+            btnAudioSoundon.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_soundoff_icon_selector), null, null);
+        } else {
+            mAnyrtcMeet.SetLocalAudioEnabled(true);
+            btnAudioSoundon.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_soundon_icon_selector), null, null);
+        }
+        isLocaAudioFlag = !isLocaAudioFlag;
+    }
+
+    /**
+     * 设置大小屏幕
+     */
+    public void setfullScreen() {
+        if (isLocaScreenFlag) {
+            bntFullScreen.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_fullscreen_icon_selector), null, null);
+        } else {
+            bntFullScreen.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_window_icon_selector), null, null);
         }
 
+        isLocaScreenFlag = !isLocaScreenFlag;
     }
 
     /**
@@ -366,6 +426,67 @@ public class MainActivity extends BaseMeetingActivity {
         EventBus.getDefault().post(msg);
     }
 
+    @Override
+    void onPeopleNumChange(int peopleNum) {
+        Log.e(TAG, "onPeopleNumChange: " + peopleNum);
+        if (peopleNum > 0) {
+            rLayoutWait.setVisibility(View.GONE);
+        } else {
+            //当人数为0的时候显示
+
+            switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
+            //切换房间
+            destoryJoinMeet();
+            if (meetType == MeetType.MEET_EXIST) {
+                rLayoutWait.setVisibility(View.GONE);
+            }
+
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(this, R.string.exit_once_more, Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+            } else {
+                mNetWork.signOut(TVAPP.getmTVAPP().getAuthorization());
+                this.finish();
+            }
+            return true;
+        }
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_full_screen:
+                Log.e(TAG, "onClick: " + "全屏");
+
+                setfullScreen();
+                break;
+            case R.id.btn_audio_soundon:
+                Log.e(TAG, "onClick: " + "打开或者关闭声音");
+                setLocalAudioEnabled();
+                break;
+
+            case R.id.btn_main_hangup:
+                Log.e(TAG, "onClick: " + "离开");
+
+                destoryJoinMeet();
+                break;
+            default:
+                break;
+
+        }
+    }
+
 
     /**
      * EeventBus方法
@@ -407,5 +528,6 @@ public class MainActivity extends BaseMeetingActivity {
                 break;
         }
     }
+
 
 }

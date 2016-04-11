@@ -29,7 +29,6 @@ import org.dync.tv.teameeting.structs.EventType;
 import java.util.List;
 
 import butterknife.Bind;
-import de.greenrobot.event.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -287,9 +286,9 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 if (mMeetingListener != null) {
                     Log.e(TAG, "onClick: ");
                     mMeetingListener.onClickCall(phone);
-                    Message msg = Message.obtain();
-                    msg.what = EventType.MSG_CALL_START.ordinal();//分别发送到CallRingFragment、MeetingFragment
-                    EventBus.getDefault().post(msg);
+                    //Message msg = Message.obtain();
+                    //msg.what = EventType.MSG_CALL_START.ordinal();//分别发送到CallRingFragment、MeetingFragment
+                    //EventBus.getDefault().post(msg);
                 }
                 break;
             case R.id.listView:

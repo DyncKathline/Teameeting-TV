@@ -1,5 +1,6 @@
 package org.dync.tv.teameeting.activity;
 
+import android.util.Log;
 import android.widget.RelativeLayout;
 
 import org.anyrtc.AnyrtcMeet;
@@ -85,7 +86,8 @@ public abstract class BaseMeetingActivity extends BaseActivity implements MeetEv
 
     @Override
     public void OnRtcLeaveMeet(int i) {
-
+        if (mDebug)
+            Log.e(TAG, "OnRtcLeaveMeet: +i" + i);
     }
 
 
@@ -96,11 +98,12 @@ public abstract class BaseMeetingActivity extends BaseActivity implements MeetEv
         @Override
         public void OnPeopleNumChange(int peopleNum) {
             if (mDebug) {
-                /**
-                 * 有人来了以后把像缩小
-                 */
+                Log.e(TAG, "OnPeopleNumChange: -----" + peopleNum);
             }
+            onPeopleNumChange(peopleNum);
         }
     };
+
+    abstract void onPeopleNumChange(int peopleNum);
 
 }

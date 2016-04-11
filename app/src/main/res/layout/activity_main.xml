@@ -15,7 +15,9 @@
     <FrameLayout
         android:id="@+id/flayout_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
     <LinearLayout
 
@@ -34,7 +36,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"></View>
 
-        <LinearLayout
+        <org.dync.tv.teameeting.view.RoomControls
             android:id="@+id/llayout_control"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -44,22 +46,47 @@
             <Button
                 android:id="@+id/btn_full_screen"
                 style="@style/btn_control"
-                android:drawableTop="@mipmap/video_full_normal"
+                android:drawableTop="@drawable/btnview_window_icon_selector"
                 android:text="全屏" />
 
             <Button
-                android:id="@+id/btn_video_soundon"
+                android:id="@+id/btn_audio_soundon"
                 style="@style/btn_control"
-
-                android:drawableTop="@mipmap/video_soundon_normal"
+                android:drawableTop="@drawable/btnview_soundon_icon_selector"
                 android:text="静音" />
 
             <Button
-                android:id="@+id/btn_hangup"
+                android:id="@+id/btn_main_hangup"
                 style="@style/btn_control"
-                android:drawableTop="@mipmap/video_hangup_normal"
+                android:drawableTop="@drawable/btnview_hungup_icon_selector"
                 android:text="挂断" />
-        </LinearLayout>
+        </org.dync.tv.teameeting.view.RoomControls>
     </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/rlayout_call_wait"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pbar_wait"
+            android:layout_gravity="center"
+
+            android:layout_above="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="27dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="请稍等,正在加载远端像............"
+            android:layout_gravity="center"
+            android:id="@+id/textView2"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="219dp" />
+    </RelativeLayout>
 </RelativeLayout>
