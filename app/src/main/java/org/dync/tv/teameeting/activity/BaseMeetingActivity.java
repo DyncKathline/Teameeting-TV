@@ -45,22 +45,28 @@ public abstract class BaseMeetingActivity extends BaseActivity implements MeetEv
     @Override
     protected void onResume() {
         super.onResume();
-        mAnyrtcMeet.OnResume();
+        if (mAnyrtcMeet != null) {
+            mAnyrtcMeet.OnResume();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         {//* Release RtcClient
-            mAnyrtcMeet.Destroy();
-            mAnyrtcMeet = null;
+            if (mAnyrtcMeet != null) {
+                mAnyrtcMeet.Destroy();
+                mAnyrtcMeet = null;
+            }
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mAnyrtcMeet.OnPause();
+        if (mAnyrtcMeet != null) {
+            mAnyrtcMeet.OnPause();
+        }
     }
 
     /**

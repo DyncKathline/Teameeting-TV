@@ -169,6 +169,14 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (mMeetingFragment != null){
+            mMeetingFragment.initMeetingFragmentLayout();
+        }
+    }
+
     /**
      * 加入会议
      *

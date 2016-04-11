@@ -108,8 +108,6 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         drawBeforeGetSize();
         initListener();
         initData();
-        requestFocus();
-
     }
 
     public void requestFocus() {
@@ -163,8 +161,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
             public void onGlobalLayout() {
                 rlayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 buttonWidth = rlayout.getWidth() / 3;
-                buttonHeight = buttonWidth;
-                //buttonHeight = rlayout.getHeight()/6;
+                buttonHeight = rlayout.getHeight() / 5;
                 Log.i("TAG", "buttonWidth= " + buttonWidth + "; buttonHeight= " + buttonHeight);
             }
         });
@@ -219,6 +216,15 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         button12.setOnFocusChangeListener(this);
         button13.setOnFocusChangeListener(this);
         listView.setOnFocusChangeListener(this);
+    }
+
+    /**
+     * 应用第一次展示此界面，使焦点聚焦到按钮数字1上，并使二维码界面平移到屏幕外面
+     */
+    public void initMeetingFragmentLayout(){
+        requestFocus();
+        Log.e("TAG",-imageWidth+"");
+        llayoutMeeting.animate().translationX(-imageWidth).start();
     }
 
     @Override
@@ -296,21 +302,23 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
             case R.id.imageView:
                 oldPosition = 0;
                 duration = 0;
-                if (hasFocus) {
-                    llayoutMeeting.animate().translationX(imageWidth).setDuration(200).start();
-                    imageButton.setVisibility(View.GONE);
-                    button13.setBackgroundColor(getResources().getColor(R.color.transparent));
-                    scaleImageView.setVisibility(View.VISIBLE);
-                    if (scaleAnimation == null) {
-                        scaleAnimation = new ScaleAnimation(0, 1, 0, 1, imageWidth, imageHeight / 2);
+                if (imageButton != null) {
+                    if (hasFocus) {
+                        llayoutMeeting.animate().translationX(0).setDuration(200).start();
+                        imageButton.setVisibility(View.GONE);
+                        button13.setBackgroundColor(getResources().getColor(R.color.transparent));
+                        scaleImageView.setVisibility(View.VISIBLE);
+                        if (scaleAnimation == null) {
+                            scaleAnimation = new ScaleAnimation(0, 1, 0, 1, imageWidth, imageHeight / 2);
+                        }
+                        scaleAnimation.setDuration(200);
+                        scaleImageView.startAnimation(scaleAnimation);
+                    } else {
+                        llayoutMeeting.animate().translationX(-imageWidth).setDuration(200).start();
+                        imageButton.setVisibility(View.VISIBLE);
+                        scaleImageView.setVisibility(View.GONE);
+                        requestFocus();
                     }
-                    scaleAnimation.setDuration(200);
-                    scaleImageView.startAnimation(scaleAnimation);
-                } else {
-                    llayoutMeeting.animate().translationX(0).setDuration(200).start();
-                    imageButton.setVisibility(View.VISIBLE);
-                    scaleImageView.setVisibility(View.GONE);
-                    requestFocus();
                 }
                 break;
             case R.id.button1:
