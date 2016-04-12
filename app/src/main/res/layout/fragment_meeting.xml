@@ -4,10 +4,10 @@
     android:id="@+id/llayout_meeting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="20dp"
+    android:layout_marginBottom="40dp"
     android:layout_marginLeft="20dp"
     android:layout_marginRight="20dp"
-    android:layout_marginBottom="40dp"
+    android:layout_marginTop="20dp"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
@@ -18,16 +18,16 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:layout_weight="1"
             android:textColor="@color/white" />
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <TextView
@@ -48,9 +48,9 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="0.75"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:layout_weight="0.75"
             android:text="最近通话"
             android:textColor="@color/white"
             android:textSize="@dimen/textsize" />
@@ -64,24 +64,56 @@
         <RelativeLayout
             android:id="@+id/rlayout_image"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:background="@drawable/shape_corners_bg"
+            android:nextFocusRight="@+id/button1">
 
-            <ImageView
-                android:id="@+id/imageView"
+            <LinearLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@mipmap/logo"
-                android:focusable="true"
-                android:nextFocusRight="@+id/button1" />
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:background="@drawable/qr_code"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="30dp"
+                    android:text="扫一扫二维码"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="下载视频聊天手机客户端"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="30dp"
+                    android:textSize="12sp"
+                    android:text="Powered by Shanghai Boyuan(DYNC)"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:text="Electronic Technology CO>LTD"/>
+
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/scaleImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:background="@drawable/shape_image_border" />
 
         </RelativeLayout>
@@ -89,9 +121,9 @@
         <LinearLayout
             android:id="@+id/llayout_control"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
+            android:layout_weight="1"
             android:background="@drawable/shape_corners_bg"
             android:orientation="vertical">
 
@@ -99,11 +131,12 @@
                 android:id="@+id/edt_meeting"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
+                android:layout_marginLeft="15dp"
                 android:focusable="false"
                 android:singleLine="true"
                 android:text="4008083052"
-                android:textSize="@dimen/textsize"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize" />
 
             <RelativeLayout
                 android:id="@+id/rlayout"
@@ -135,7 +168,7 @@
                             android:id="@+id/button1"
                             style="@style/ButtonStyle"
                             android:nextFocusDown="@+id/button4"
-                            android:nextFocusLeft="@+id/imageView"
+                            android:nextFocusLeft="@+id/rlayout_image"
                             android:nextFocusRight="@+id/button2"
                             android:nextFocusUp="@+id/button13"
                             android:text="1" />
@@ -169,7 +202,7 @@
                             android:id="@+id/button4"
                             style="@style/ButtonStyle"
                             android:nextFocusDown="@+id/button7"
-                            android:nextFocusLeft="@+id/imageView"
+                            android:nextFocusLeft="@+id/rlayout_image"
                             android:nextFocusRight="@+id/button5"
                             android:nextFocusUp="@+id/button1"
                             android:text="4" />
@@ -203,7 +236,7 @@
                             android:id="@+id/button7"
                             style="@style/ButtonStyle"
                             android:nextFocusDown="@+id/button10"
-                            android:nextFocusLeft="@+id/imageView"
+                            android:nextFocusLeft="@+id/rlayout_image"
                             android:nextFocusRight="@+id/button8"
                             android:nextFocusUp="@+id/button4"
                             android:text="7" />
@@ -237,7 +270,7 @@
                             android:id="@+id/button10"
                             style="@style/ButtonStyle"
                             android:nextFocusDown="@+id/button13"
-                            android:nextFocusLeft="@+id/imageView"
+                            android:nextFocusLeft="@+id/rlayout_image"
                             android:nextFocusRight="@+id/button11"
                             android:nextFocusUp="@+id/button7"
                             android:text="清空" />
@@ -270,9 +303,8 @@
                         <Button
                             android:id="@+id/button13"
                             style="@style/ButtonStyle"
-                            android:background="@drawable/selector_btn_cancle"
                             android:nextFocusDown="@+id/button1"
-                            android:nextFocusLeft="@+id/imageView"
+                            android:nextFocusLeft="@+id/rlayout_image"
                             android:nextFocusRight="@+id/listView"
                             android:nextFocusUp="@+id/button12"
                             android:text="呼叫" />
@@ -287,9 +319,9 @@
         <LinearLayout
             android:id="@+id/llayout_list"
             android:layout_width="0dp"
-            android:layout_weight="0.75"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
+            android:layout_weight="0.75"
             android:background="@drawable/shape_corners_bg"
             android:orientation="vertical">
 
@@ -298,9 +330,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:focusable="true"
                 android:divider="@null"
-                android:nextFocusLeft="@+id/button3" />
+                android:listSelector="@color/transparent"
+                android:nextFocusLeft="@+id/button3"
+                android:scrollbars="none" />
 
         </LinearLayout>
 

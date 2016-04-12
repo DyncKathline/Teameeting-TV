@@ -82,8 +82,7 @@
             android:shadowRadius="3.0"
             android:layout_marginTop="20dp"
             android:text="挂断"
-            android:background="@color/transparent"
-            android:src="@color/selector_btn_cancle"
+            android:background="@drawable/selector_btn_cancle"
             android:textColor="@color/white"
             android:textSize="33sp" />
     </LinearLayout>
