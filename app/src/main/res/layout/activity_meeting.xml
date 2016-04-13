@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:scaleType="centerInside"
-            android:src="@mipmap/video_close"
+            android:src="@drawable/video_close"
            />
         <ImageView
             android:id="@+id/img_close_voice"
