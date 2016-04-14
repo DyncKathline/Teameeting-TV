@@ -41,25 +41,35 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:visibility="invisible">
 
             <Button
                 android:id="@+id/btn_full_screen"
                 style="@style/btn_control"
                 android:drawableTop="@drawable/btnview_window_icon_selector"
                 android:focusable="true"
+                android:nextFocusLeft="@+id/btn_main_hangup"
+                android:nextFocusRight="@+id/btn_audio_soundon"
                 android:text="全屏" />
 
             <Button
                 android:id="@+id/btn_audio_soundon"
                 style="@style/btn_control"
                 android:drawableTop="@drawable/btnview_soundon_icon_selector"
+                android:focusable="true"
+                android:nextFocusLeft="@+id/btn_full_screen"
+                android:nextFocusRight="@+id/btn_main_hangup"
                 android:text="静音" />
 
             <Button
                 android:id="@+id/btn_main_hangup"
                 style="@style/btn_control"
                 android:drawableTop="@drawable/btnview_hungup_icon_selector"
+                android:focusable="true"
+                android:nextFocusLeft="@+id/btn_audio_soundon"
+                android:nextFocusRight="@+id/btn_full_screen"
                 android:text="挂断" />
         </org.dync.tv.teameeting.view.RoomControls>
     </LinearLayout>
@@ -76,7 +86,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/textView2"
-
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginBottom="27dp" />
@@ -84,7 +93,6 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
-
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
@@ -92,4 +100,5 @@
             android:layout_marginBottom="219dp"
             android:text="请稍等,正在加载远端像............" />
     </RelativeLayout>
+
 </RelativeLayout>
