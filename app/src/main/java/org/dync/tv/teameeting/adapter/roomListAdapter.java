@@ -11,19 +11,18 @@ import android.widget.TextView;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Xiao_Bailong on 2016/4/5.
  */
-public class roomListAdapter extends BaseAdapter {
+public class RoomListAdapter extends BaseAdapter {
 
     private List<MeetingListEntity> meetingLists;
     private Context context;
     private boolean hasFocus;
 
-    public roomListAdapter(List<MeetingListEntity> meetingLists, Context context) {
+    public RoomListAdapter(List<MeetingListEntity> meetingLists, Context context) {
         this.meetingLists = meetingLists;
         this.context = context;
     }
