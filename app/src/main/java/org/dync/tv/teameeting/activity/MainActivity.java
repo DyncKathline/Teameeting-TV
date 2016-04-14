@@ -53,7 +53,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     @Bind(R.id.llayout_control)
     RoomControls lLayoutControl;
     @Bind(R.id.btn_full_screen)
-    Button bntFullScreen;
+        Button bntFullScreen;
     @Bind(R.id.btn_audio_soundon)
     Button btnAudioSoundon;
     @Bind(R.id.btn_main_hangup)

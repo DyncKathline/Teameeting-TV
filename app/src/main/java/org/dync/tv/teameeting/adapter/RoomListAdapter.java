@@ -11,7 +11,6 @@ import android.widget.TextView;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
