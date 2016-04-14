@@ -43,7 +43,23 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     private static int mScreenHeight;
     private int width = mScreenWidth * SUB_WIDTH / (100 * 3);
     private int height = mScreenHeight * SUB_HEIGHT / (100 * 3);
+    private onPeopleChangeListener peopleChangeListener;
 
+    /**
+     * 人数改变监听
+     */
+    public interface onPeopleChangeListener {
+        void OnPeopleNumChange(int peopleNum);
+    }
+
+    /**
+     * 人数改变回掉监听
+     *
+     * @param videoViewPeopleNumEvent
+     */
+    public void setOnPeopleChangeListener(onPeopleChangeListener videoViewPeopleNumEvent) {
+        peopleChangeListener = videoViewPeopleNumEvent;
+    }
 
     public interface VideoViewEvent {
         void OnScreenSwitch(String strBeforeFullScrnId, String strNowFullScrnId);
@@ -235,23 +251,6 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         return null;
     }
 
-    /**
-     * 全屏
-     */
-    public void maxLocalRenderFullScreen() {
-        int index, x, y, w, h;
-        index = mLocalRender.index;
-        mLocalRender.x = 0;
-        mLocalRender.y = 0;
-        mLocalRender.w = SUB_WIDTH * 2;
-        mLocalRender.h = SUB_WIDTH * 2;
-        mLocalRender.mLayout.setPosition(mLocalRender.x, mLocalRender.y, mLocalRender.w, mLocalRender.h);
-        //mLocalRender.mView.requestLayout();
-        PercentFrameLayout layout_a = mLocalRender.mLayout;
-        SurfaceViewRenderer view_a = mLocalRender.mView;
-        mLocalRender.updateVideoLayoutView(layout_a, view_a);
-
-    }
 
     /**
      * 缩小本地的像50%
@@ -443,6 +442,52 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     }
 
     /**
+     * 切换像的位置
+     *
+     * @param startX
+     * @param startY
+     */
+    public void switchLocaToRomoteScreen(int startX, int startY) {
+        if (mLocalRender != null && mLocalRender.Hited(startX, startY)) {
+            //如果点击的是本地的像
+            SwitchViewToFullscreen(mLocalRender, GetFullScreen());
+
+        } else {
+            Iterator<Map.Entry<String, VideoView>> iter = mRemoteRenders.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<String, VideoView> entry = iter.next();
+                String peerId = entry.getKey();
+                VideoView render = entry.getValue();
+                if (render.Hited(startX, startY)) {
+                    //当前的像和
+                    SwitchViewToFullscreen(render, GetFullScreen());
+
+                }
+            }
+        }
+    }
+
+    /**
+     * 全屏
+     */
+    public void maxLocalRenderFullScreen() {
+        int index, x, y, w, h;
+        index = mLocalRender.index;
+        mLocalRender.x = 0;
+        mLocalRender.y = 0;
+        mLocalRender.w = 100;
+        mLocalRender.h = Loc_SUB_HEIGHT;
+        mLocalRender.mLayout.setPosition(mLocalRender.x, mLocalRender.y, mLocalRender.w, mLocalRender.h);
+        //mLocalRender.mView.requestLayout();
+        PercentFrameLayout layout_a = mLocalRender.mLayout;
+        SurfaceViewRenderer view_a = mLocalRender.mView;
+
+        mLocalRender.updateVideoLayoutView(layout_a, view_a);
+
+    }
+
+
+    /**
      * Implements for AnyRTCViewEvents.
      */
     @Override
@@ -475,6 +520,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
                 SwitchViewToFullscreen(remoteRender, mLocalRender);
             }
             setScaleAnimation(remoteRender.mView);
+            peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
     }
 
@@ -493,6 +539,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             mVideoView.removeView(remoteRender.mLayout);
             mRemoteRenders.remove(peerId);
             remoteRender = null;
+            peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
     }
 
@@ -500,7 +547,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     public void OnRtcOpenLocalRender(VideoTrack localTrack) {
         int size = GetVideoRenderSize();
         if (size == 0) {
-            mLocalRender = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, 0, 0, 0, 100, Loc_SUB_HEIGHT);
+            mLocalRender = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, 0, 0, 0, 100, 100);
         } else {
             mLocalRender = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, size, (100 - size * (SUB_WIDTH + SUB_X)), SUB_Y, SUB_WIDTH, SUB_HEIGHT);
             mLocalRender.mView.setZOrderMediaOverlay(true);

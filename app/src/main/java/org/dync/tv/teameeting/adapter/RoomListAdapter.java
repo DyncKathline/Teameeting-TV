@@ -65,7 +65,7 @@ public class RoomListAdapter extends BaseAdapter {
         }
 
         if (hasFocus) {
-            convertView.setBackgroundResource(R.drawable.selector_item);
+            convertView.setBackgroundResource(R.drawable.item_selector);
             Log.e("BaseAdapter", "getView得到焦点====" + position);
         } else {
             convertView.setBackgroundResource(R.drawable.button_default);

@@ -311,7 +311,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                     if (hasFocus) {
                         llayoutMeeting.animate().translationX(0).setDuration(200).start();
                         imageButton.setVisibility(View.GONE);
-                        button13.setBackgroundColor(getResources().getColor(R.color.transparent));
+                        button13.setBackgroundResource(R.drawable.button_default);
                         scaleImageView.setVisibility(View.VISIBLE);
                         if (scaleAnimation == null) {
                             scaleAnimation = new ScaleAnimation(0, 1, 0, 1, imageWidth, imageHeight / 2);
@@ -440,7 +440,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 if (imageButton != null) {
                     if (hasFocus) {
                         imageButton.setVisibility(View.GONE);
-                        button13.setBackgroundResource(R.drawable.selector_btn_ok);
+                        button13.setBackgroundResource(R.drawable.btn_ok_selector);
                     } else {
                         imageButton.setVisibility(View.VISIBLE);
                         button13.setBackgroundResource(R.drawable.button_default);
