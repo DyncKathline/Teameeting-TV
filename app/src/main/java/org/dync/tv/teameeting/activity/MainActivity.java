@@ -1,5 +1,7 @@
 package org.dync.tv.teameeting.activity;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -27,7 +29,7 @@ import org.dync.tv.teameeting.view.RoomControls;
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 
-public class MainActivity extends BaseMeetingActivity implements View.OnClickListener {
+public class MainActivity extends BaseMeetingActivity implements View.OnClickListener,View.OnFocusChangeListener {
     private FragmentManager fm;
     private Fragment mContent;//显示当前的Fragment
     private MeetingFragment mMeetingFragment;
@@ -73,10 +75,10 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         if (MeetType.MEET_NO_EXIST == meetType) {
             //没有入会
             meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
-            switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //打开接通或者取消的按钮
+            switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //打开取消的按钮
 
         } else if (MeetType.MEET_EXIST == meetType) {
-            if (joinMeetistEntity != null && joinMeetistEntity.getMeetingid().equals(meetingListEntity.getMeetingid())) {
+            if (joinMeetistEntity != null && meetingListEntity != null && joinMeetistEntity.getMeetingid().equals(meetingListEntity.getMeetingid())) {
                 return;
             } else {
                 //有人进入其他会议,;
@@ -114,16 +116,22 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         bntFullScreen.setOnClickListener(this);
         btnMainHangup.setOnClickListener(this);
         btnAudioSoundon.setOnClickListener(this);
+
+        bntFullScreen.setOnFocusChangeListener(this);
+        btnMainHangup.setOnFocusChangeListener(this);
+        btnAudioSoundon.setOnFocusChangeListener(this);
+
         mMeetingFragment.setOnMeetingListener(new MeetingFragment.MeetingListener() {
             @Override
             public void onClickCall(String phone) {
                 Log.e(TAG, "onClickCall: ----呼叫");
                 // 拨号上网.
-                lLayoutControl.show();
-                enterMeeting(phone);
                 hideAllContent();
+                enterMeeting(phone);
                 //switchContent(mMeetingFragment, mCallRingFragment, TAG_FRAG_CALL);
                 sendPostCall(false);
+                lLayoutControl.show();
+                bntFullScreen.requestFocus();
             }
         });
 
@@ -216,8 +224,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         } else {
 
         }
-        lLayoutControl.hide();
-        switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
     }
 
 
@@ -234,6 +240,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     /**
      * 设置音频按钮
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setLocalAudioEnabled() {
         if (isLocaAudioFlag) {
             mAnyrtcMeet.SetLocalAudioEnabled(false);
@@ -248,6 +255,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     /**
      * 设置大小屏幕
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setfullScreen() {
         if (isLocaScreenFlag) {
             bntFullScreen.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_fullscreen_icon_selector), null, null);
@@ -477,7 +485,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
             case R.id.btn_main_hangup:
                 Log.e(TAG, "onClick: " + "离开");
-
+                lLayoutControl.hide();
+                switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
+                mMeetingFragment.requestFocus();
                 destoryJoinMeet();
                 break;
             default:
@@ -486,6 +496,24 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         }
     }
 
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch (v.getId()) {
+            case R.id.btn_full_screen:
+                Log.e(TAG, "onFocusChange: " + "全屏");
+                break;
+            case R.id.btn_audio_soundon:
+                Log.e(TAG, "onFocusChange: " + "打开或者关闭声音");
+                break;
+
+            case R.id.btn_main_hangup:
+                Log.e(TAG, "onFocusChange: " + "离开");
+                break;
+            default:
+                break;
+
+        }
+    }
 
     /**
      * EeventBus方法
@@ -527,6 +555,5 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 break;
         }
     }
-
 
 }

@@ -22,7 +22,7 @@ import com.orhanobut.logger.Logger;
 import org.anyrtc.AnyrtcMeet;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
-import org.dync.tv.teameeting.adapter.RoomListAdapter;
+import org.dync.tv.teameeting.adapter.roomListAdapter;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.structs.EventType;
 
@@ -40,8 +40,8 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     public EditText edtMeetNum;//
     @Bind(R.id.scaleImageView)
     public ImageView scaleImageView;//缩放二维码图片的框
-    @Bind(R.id.imageView)
-    public ImageView imageview;//二维码图片
+    @Bind(R.id.rlayout_image)
+    public RelativeLayout rlayoutImage;//二维码图片
     @Bind(R.id.button1)
     public Button button1;//数字1
     @Bind(R.id.button2)
@@ -92,7 +92,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     private int oldPosition = -1;//光标焦点移动下一个焦点时前一个位置，此处与buttonX后面的X数字一致，如“1”，即button1的位置
     private ScaleAnimation scaleAnimation;
     private int duration = 0;//光标移动的时长
-    private RoomListAdapter adapter;
+    private roomListAdapter adapter;
     public List<MeetingListEntity> mMeetingLists;
     AnyrtcMeet mAnyrtcMeet;
 
@@ -118,9 +118,14 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         meetingTextView.setText(TVAPP.getmTVAPP().getMeetingListEntity().getMeetingid());
 
         mMeetingLists = TVAPP.getmTVAPP().getMeetingLists();
-        adapter = new RoomListAdapter(mMeetingLists, mContext);
+//        mMeetingLists = new ArrayList<>();
+//        MeetingListEntity meetingListEntity = new MeetingListEntity();
+//        meetingListEntity.setMeetingid("11111111");
+//        meetingListEntity.setMeetname("hezi");
+//        mMeetingLists.add(meetingListEntity);
+        adapter = new roomListAdapter(mMeetingLists, mContext);
         listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        listView.setFocusable(true);
         listView.setOnItemClickListener(listItemListener);
     }
 
@@ -143,13 +148,13 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
      */
     private void drawBeforeGetSize() {
         //提前获取imageview控件的宽
-        ViewTreeObserver vto = imageview.getViewTreeObserver();
+        ViewTreeObserver vto = rlayoutImage.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                imageview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                imageWidth = imageview.getWidth() + 20;
-                imageHeight = imageview.getHeight();
+                rlayoutImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                imageWidth = rlayoutImage.getWidth() + 20;
+                imageHeight = rlayoutImage.getHeight();
                 Log.i("TAG", "imageWidth= " + imageWidth + "; imageHeight= " + imageHeight);
             }
         });
@@ -201,7 +206,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         button12.setOnClickListener(this);
         button13.setOnClickListener(this);
 
-        imageview.setOnFocusChangeListener(this);
+        rlayoutImage.setOnFocusChangeListener(this);
         button1.setOnFocusChangeListener(this);
         button2.setOnFocusChangeListener(this);
         button3.setOnFocusChangeListener(this);
@@ -221,16 +226,16 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     /**
      * 应用第一次展示此界面，使焦点聚焦到按钮数字1上，并使二维码界面平移到屏幕外面
      */
-    public void initMeetingFragmentLayout(){
+    public void initMeetingFragmentLayout() {
         requestFocus();
-        Log.e("TAG",-imageWidth+"");
+        Log.e("TAG", -imageWidth + "");
         llayoutMeeting.animate().translationX(-imageWidth).start();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imageView:
+            case R.id.rlayout_image:
                 break;
             case R.id.button1:
                 phone += "1";
@@ -299,7 +304,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         switch (v.getId()) {
-            case R.id.imageView:
+            case R.id.rlayout_image:
                 oldPosition = 0;
                 duration = 0;
                 if (imageButton != null) {
@@ -435,30 +440,33 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 if (imageButton != null) {
                     if (hasFocus) {
                         imageButton.setVisibility(View.GONE);
-                        button13.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                        button13.setBackgroundResource(R.drawable.selector_btn_ok);
                     } else {
                         imageButton.setVisibility(View.VISIBLE);
-                        button13.setBackgroundColor(getResources().getColor(R.color.transparent));
+                        button13.setBackgroundResource(R.drawable.button_default);
                     }
                 }
                 duration = 0;
                 oldPosition = 13;
                 break;
             case R.id.listView:
-                if (imageButton != null) {
+                if (imageButton != null && adapter != null) {
                     if (hasFocus) {
                         imageButton.setVisibility(View.GONE);
+                        adapter.hasFocus(true);
                     } else {
                         imageButton.setVisibility(View.VISIBLE);
+                        adapter.hasFocus(false);
                     }
                 }
                 duration = 0;
                 oldPosition = 14;
                 break;
         }
-        Logger.e("TAG", "oldPosition= " + oldPosition);
-        if (imageButton != null)
+        Log.e("TAG", "oldPosition= " + oldPosition);
+        if (imageButton != null) {
             imageButton.animate().translationX(translationX).translationY(translationY).setDuration(duration).start();
+        }
     }
 
     /**
