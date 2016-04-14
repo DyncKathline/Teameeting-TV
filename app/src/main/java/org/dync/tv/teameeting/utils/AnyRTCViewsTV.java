@@ -1,14 +1,22 @@
 package org.dync.tv.teameeting.utils;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import org.anyrtc.Anyrtc;
 import org.anyrtc.common.AnyRTCViewEvents;
 import org.anyrtc.util.AppRTCUtils;
 import org.anyrtc.view.PercentFrameLayout;
+import org.dync.tv.teameeting.R;
 import org.webrtc.EglBase;
 import org.webrtc.RendererCommon;
 import org.webrtc.SurfaceViewRenderer;
@@ -29,15 +37,17 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     private static final int SUB_HEIGHT = 50;
     private static final int SUB_DIS_X = 10;
     private static final int SUB_DIS_Y = 10;
-    private static final float RADIO_X= 0.4f;
-    private static final float RADIO_M = 0.6f;
-
+    private static final int Loc_SUB_HEIGHT = 67;
+    private Context context;
+    private static int mScreenWidth;
+    private static int mScreenHeight;
+    private int width = mScreenWidth * SUB_WIDTH / (100 * 3);
+    private int height = mScreenHeight * SUB_HEIGHT / (100 * 3);
 
 
     public interface VideoViewEvent {
         void OnScreenSwitch(String strBeforeFullScrnId, String strNowFullScrnId);
     }
-
 
     protected static class VideoView {
         public String strPeerId;
@@ -47,6 +57,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         public int w;
         public int h;
         public PercentFrameLayout mLayout = null;
+
         public SurfaceViewRenderer mView = null;
         public VideoTrack mVideoTrack = null;
         public VideoRenderer mRenderer = null;
@@ -60,8 +71,12 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             this.h = h;
 
             mLayout = new PercentFrameLayout(ctx);
+
             mLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+            mLayout.setFocusable(true);
+
             mView = new SurfaceViewRenderer(ctx);
+
             mView.init(eglBase.getEglBaseContext(), null);
             mView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             mLayout.addView(mView);
@@ -72,7 +87,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         }
 
         /**
-         * 判断是否点击在当前的像
+         * 判断是否点击在当前的像上面
          *
          * @param px
          * @param py
@@ -113,6 +128,8 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
                 mVideoTrack.addRenderer(mRenderer);
             }
             mView.requestLayout();
+            // mLayout.animate().translationX(100).start();
+
         }
 
 
@@ -124,22 +141,36 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     private RelativeLayout mVideoView;
     private VideoView mLocalRender;
     private HashMap<String, VideoView> mRemoteRenders;
-    private onPeopleChangeListener peopleChangeListener;
+    private Animation mTranslateAnimation;
 
-    /**
-     * 人数改变监听
-     */
-    public interface onPeopleChangeListener {
-        void OnPeopleNumChange(int peopleNum);
+    public void setAnimation() {
+        mTranslateAnimation = new TranslateAnimation(0, 100, 0, 100);
+        mTranslateAnimation.setDuration(2000);
+        mLocalRender.mView.startAnimation(mTranslateAnimation);
     }
 
-    /**
-     * 人数改变回掉监听
-     *
-     * @param videoViewPeopleNumEvent
-     */
-    public void setOnPeopleChangeListener(onPeopleChangeListener videoViewPeopleNumEvent) {
-        peopleChangeListener = videoViewPeopleNumEvent;
+    private Animation mAlphaAnimation;
+    private Animation mScaleAnimation;
+    private Animation mRotateAnimation;
+
+    public void setRoate() {
+        mRotateAnimation = new RotateAnimation(0.0f, 360.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        mRotateAnimation.setDuration(3000);
+        mLocalRender.mView.startAnimation(mRotateAnimation);
+    }
+
+    public void setScaleAnimation(View view) {
+        view = mLocalRender.mView;
+        ObjectAnimator animator1 = ObjectAnimator.ofFloat(view, "translationX", 0, 1f);
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0f, 1f);
+        ObjectAnimator animator3 = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0f, 1f);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.setDuration(3000);
+        animatorSet.playTogether(animator1, animator2, animator3);
+        animatorSet.start();
+        //view.startAnimation(mScaleAnimation);
+        // mLocalRender.mView.invalidate();
     }
 
     public AnyRTCViewsTV(RelativeLayout videoView) {
@@ -149,6 +180,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         mVideoView.setOnTouchListener(this);
         mRootEglBase = EglBase.create();
         mRemoteRenders = new HashMap<>();
+
     }
 
     public VideoTrack LocalVideoTrack() {
@@ -185,7 +217,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     }
 
     /**
-     * 判断哪一个像是沾满整个屏幕的。
+     * 判断哪一个像是占满整个屏幕的。
      *
      * @return
      */
@@ -236,6 +268,18 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         mLocalRender.mView.requestLayout();
     }
 
+
+    public void propertyValuesHolder(View view) {
+
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat("alpha", 1f,
+                0f, 1f);
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat("scaleX", 1f,
+                0, 1f);
+        PropertyValuesHolder pvhZ = PropertyValuesHolder.ofFloat("scaleY", 1f,
+                0, 1f);
+        ObjectAnimator.ofPropertyValuesHolder(mLocalRender.mLayout, pvhX, pvhY, pvhZ).setDuration(3000).start();
+    }
+
     /**
      * 缩放指定位置的像
      *
@@ -264,9 +308,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         view1.w = view1.w * 2;
         view1.h = view1.h * 2;
         view1.mLayout.setPosition(view1.x, view1.y, view1.w, view1.h);
-        PercentFrameLayout layout_a = view1.mLayout;
-        SurfaceViewRenderer view_a = view1.mView;
-        view1.updateVideoLayoutView(layout_a, view_a);
+
     }
 
 
@@ -414,15 +456,9 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         if (remoteRender == null) {
             int size = GetVideoRenderSize();
             if (size == 0) {
-                //remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, 0,5, 44, 51, 36);
+                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, 0, 0, 0, 100, 100);
             } else if (size == 1) {
-                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 3 , 2, 30, 30);
-                remoteRender.mView.setZOrderMediaOverlay(true);
-            } else if (size == 2) {
-                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 2,35, 30, 30);
-                remoteRender.mView.setZOrderMediaOverlay(true);
-            } else if (size == 3) {
-                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, 2, 67 , 30, 30);
+                remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, (size - 1) * 33, Loc_SUB_HEIGHT, 33, 33);
                 remoteRender.mView.setZOrderMediaOverlay(true);
             }
 
@@ -438,8 +474,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             if (mAutoLayout && mRemoteRenders.size() == 1 && mLocalRender != null) {
                 SwitchViewToFullscreen(remoteRender, mLocalRender);
             }
-
-            peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
+            setScaleAnimation(remoteRender.mView);
         }
     }
 
@@ -454,16 +489,10 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             if (mRemoteRenders.size() > 1 && remoteRender.index < mRemoteRenders.size()) {
                 BubbleSortSubView(remoteRender);
             }
-
-            mVideoView.removeView(remoteRender.mLayout);
-
             remoteRender.close();
             mVideoView.removeView(remoteRender.mLayout);
             mRemoteRenders.remove(peerId);
             remoteRender = null;
-
-
-            peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
     }
 
@@ -471,12 +500,21 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     public void OnRtcOpenLocalRender(VideoTrack localTrack) {
         int size = GetVideoRenderSize();
         if (size == 0) {
-            mLocalRender  = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, 0,0, 0, 100, 100);
+            mLocalRender = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, 0, 0, 0, 100, Loc_SUB_HEIGHT);
         } else {
             mLocalRender = new VideoView("localRender", mVideoView.getContext(), mRootEglBase, size, (100 - size * (SUB_WIDTH + SUB_X)), SUB_Y, SUB_WIDTH, SUB_HEIGHT);
             mLocalRender.mView.setZOrderMediaOverlay(true);
         }
         mLocalRender.mVideoTrack = localTrack;
+
+        ImageView imageView = new ImageView(mVideoView.getContext());
+        imageView.setImageResource(R.drawable.video_soundoff_normal);
+
+        RelativeLayout.LayoutParams layoutParamsVoice = new RelativeLayout.LayoutParams(100, 100);
+        layoutParamsVoice.leftMargin = ScreenUtils.getScreenWidth(mVideoView.getContext()) - 100;
+        layoutParamsVoice.topMargin = 50;
+        imageView.setLayoutParams(layoutParamsVoice);
+
         mVideoView.addView(mLocalRender.mLayout);
 
         //设置像的位置
@@ -484,6 +522,9 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         mLocalRender.mView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
         mLocalRender.mRenderer = new VideoRenderer(mLocalRender.mView);
         mLocalRender.mVideoTrack.addRenderer(mLocalRender.mRenderer);
+        mVideoView.addView(imageView, layoutParamsVoice);
+
+
     }
 
     @Override
@@ -495,8 +536,6 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             mVideoView.removeView(mLocalRender.mLayout);
             mLocalRender = null;
         }
-
-
     }
 
     @Override
