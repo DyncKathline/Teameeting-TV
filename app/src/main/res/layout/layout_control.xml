@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    tools:showIn="@layout/activity_main">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"></View>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"></View>
+
+    <org.dync.tv.teameeting.view.RoomControls
+        android:id="@+id/llayout_control"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:focusable="true"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <Button
+            android:id="@+id/btn_audio_soundon"
+            style="@style/btn_control"
+            android:drawableTop="@drawable/btnview_soundon_icon_selector"
+            android:focusable="true"
+            android:nextFocusDown="@+id/iv_remoteview1"
+            android:nextFocusUp="@+id/iv_remoteview1"
+            android:nextFocusLeft="@+id/btn_main_hangup"
+            android:nextFocusRight="@+id/btn_main_hangup"
+            android:text="静音" />
+
+        <Button
+            android:id="@+id/btn_main_hangup"
+            style="@style/btn_control"
+            android:drawableTop="@drawable/btnview_hungup_icon_selector"
+            android:focusable="true"
+            android:nextFocusDown="@+id/iv_remoteview1"
+            android:nextFocusUp="@+id/iv_remoteview1"
+            android:nextFocusLeft="@+id/btn_audio_soundon"
+            android:nextFocusRight="@+id/btn_audio_soundon"
+            android:text="挂断" />
+    </org.dync.tv.teameeting.view.RoomControls>
+</LinearLayout>

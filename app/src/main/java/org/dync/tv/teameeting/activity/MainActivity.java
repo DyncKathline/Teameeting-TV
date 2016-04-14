@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -29,7 +31,7 @@ import org.dync.tv.teameeting.view.RoomControls;
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 
-public class MainActivity extends BaseMeetingActivity implements View.OnClickListener,View.OnFocusChangeListener {
+public class MainActivity extends BaseMeetingActivity implements View.OnClickListener, View.OnFocusChangeListener {
     private FragmentManager fm;
     private Fragment mContent;//显示当前的Fragment
     private MeetingFragment mMeetingFragment;
@@ -48,12 +50,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
     public boolean isLocaVideoFlag = true;
     public boolean isLocaAudioFlag = true;
-    public boolean isLocaScreenFlag = true;
 
     @Bind(R.id.llayout_control)
     RoomControls lLayoutControl;
-    @Bind(R.id.btn_full_screen)
-        Button bntFullScreen;
     @Bind(R.id.btn_audio_soundon)
     Button btnAudioSoundon;
     @Bind(R.id.btn_main_hangup)
@@ -62,6 +61,17 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     ProgressBar pbarWait;
     @Bind(R.id.rlayout_call_wait)
     RelativeLayout rLayoutWait;
+
+    @Bind(R.id.llayout_focus_videoview)
+    LinearLayout llayoutFocusVideView;
+    @Bind(R.id.iv_localview)
+    ImageView ivLocalView;
+    @Bind(R.id.iv_remoteview1)
+    ImageView ivRemoteView1;
+    @Bind(R.id.iv_remoteview2)
+    ImageView ivRemoteView2;
+    @Bind(R.id.iv_remoteview3)
+    ImageView ivRemoteView3;
 
     /**
      * 有人进会回调该方法;
@@ -113,13 +123,19 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     }
 
     private void initListener() {
-        bntFullScreen.setOnClickListener(this);
         btnMainHangup.setOnClickListener(this);
         btnAudioSoundon.setOnClickListener(this);
+        ivLocalView.setOnClickListener(this);
+        ivRemoteView1.setOnClickListener(this);
+        ivRemoteView2.setOnClickListener(this);
+        ivRemoteView3.setOnClickListener(this);
 
-        bntFullScreen.setOnFocusChangeListener(this);
         btnMainHangup.setOnFocusChangeListener(this);
         btnAudioSoundon.setOnFocusChangeListener(this);
+        ivLocalView.setOnFocusChangeListener(this);
+        ivRemoteView1.setOnFocusChangeListener(this);
+        ivRemoteView2.setOnFocusChangeListener(this);
+        ivRemoteView3.setOnFocusChangeListener(this);
 
         mMeetingFragment.setOnMeetingListener(new MeetingFragment.MeetingListener() {
             @Override
@@ -130,8 +146,8 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 enterMeeting(phone);
                 //switchContent(mMeetingFragment, mCallRingFragment, TAG_FRAG_CALL);
                 sendPostCall(false);
-                lLayoutControl.show();
-                bntFullScreen.requestFocus();
+                showVideoViewLayout();
+                btnAudioSoundon.requestFocus();
             }
         });
 
@@ -177,10 +193,21 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
     }
 
+    private void showVideoViewLayout() {
+        lLayoutControl.show();
+        llayoutFocusVideView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideVideViewLayout() {
+        lLayoutControl.hide();
+        llayoutFocusVideView.setVisibility(View.GONE);
+    }
+
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (mMeetingFragment != null){
+        if (mMeetingFragment != null) {
             mMeetingFragment.initMeetingFragmentLayout();
         }
     }
@@ -204,7 +231,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
             if (join == true) {
                 meetType = MeetType.MEET_EXIST;
-                lLayoutControl.show();
+                showVideoViewLayout();
                 joinMeetistEntity = meetingListEntity;
             } else {
                 meetType = MeetType.MEET_NO_EXIST;
@@ -250,20 +277,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             btnAudioSoundon.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_soundon_icon_selector), null, null);
         }
         isLocaAudioFlag = !isLocaAudioFlag;
-    }
-
-    /**
-     * 设置大小屏幕
-     */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public void setfullScreen() {
-        if (isLocaScreenFlag) {
-            bntFullScreen.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_fullscreen_icon_selector), null, null);
-        } else {
-            bntFullScreen.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_window_icon_selector), null, null);
-        }
-
-        isLocaScreenFlag = !isLocaScreenFlag;
     }
 
     /**
@@ -472,12 +485,11 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+        int x = 0;
+        int y = 0;
+        int width = 0;
+        int height = 0;
         switch (v.getId()) {
-            case R.id.btn_full_screen:
-                Log.e(TAG, "onClick: " + "全屏");
-
-                setfullScreen();
-                break;
             case R.id.btn_audio_soundon:
                 Log.e(TAG, "onClick: " + "打开或者关闭声音");
                 setLocalAudioEnabled();
@@ -485,33 +497,53 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
             case R.id.btn_main_hangup:
                 Log.e(TAG, "onClick: " + "离开");
-                lLayoutControl.hide();
+                hideVideViewLayout();
                 switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
                 mMeetingFragment.requestFocus();
                 destoryJoinMeet();
                 break;
-            default:
+            case R.id.iv_localview:
                 break;
-
+            case R.id.iv_remoteview1:
+                x = (int) ivRemoteView1.getX();
+                y = (int) ivRemoteView1.getY();
+                break;
+            case R.id.iv_remoteview2:
+                x = (int) ivRemoteView2.getX();
+                y = (int) ivRemoteView2.getY();
+                break;
+            case R.id.iv_remoteview3:
+                x = (int) ivRemoteView3.getX();
+                y = (int) ivRemoteView3.getY();
+                break;
         }
+        Log.e(TAG, "-----onClick-----X= " + x + ",Y= " + y);
+        width = ivRemoteView1.getWidth();
+        height = ivRemoteView1.getHeight();
+        mAnyrtcViews.switchLocaToRomoteScreen(x + width / 2, y + height / 2);
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         switch (v.getId()) {
-            case R.id.btn_full_screen:
-                Log.e(TAG, "onFocusChange: " + "全屏");
-                break;
             case R.id.btn_audio_soundon:
                 Log.e(TAG, "onFocusChange: " + "打开或者关闭声音");
                 break;
-
             case R.id.btn_main_hangup:
                 Log.e(TAG, "onFocusChange: " + "离开");
                 break;
-            default:
+            case R.id.iv_localview:
+                Log.e(TAG, "onFocusChange: " + "本地的像");
                 break;
-
+            case R.id.iv_remoteview1:
+                Log.e(TAG, "onFocusChange: " + "别人1的像");
+                break;
+            case R.id.iv_remoteview2:
+                Log.e(TAG, "onFocusChange: " + "别人2的像");
+                break;
+            case R.id.iv_remoteview3:
+                Log.e(TAG, "onFocusChange: " + "别人3的像");
+                break;
         }
     }
 

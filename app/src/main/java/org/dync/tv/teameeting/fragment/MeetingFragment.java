@@ -22,7 +22,7 @@ import com.orhanobut.logger.Logger;
 import org.anyrtc.AnyrtcMeet;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
-import org.dync.tv.teameeting.adapter.RoomListAdapter;
+import org.dync.tv.teameeting.adapter.roomListAdapter;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.structs.EventType;
 
@@ -92,7 +92,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     private int oldPosition = -1;//光标焦点移动下一个焦点时前一个位置，此处与buttonX后面的X数字一致，如“1”，即button1的位置
     private ScaleAnimation scaleAnimation;
     private int duration = 0;//光标移动的时长
-    private RoomListAdapter adapter;
+    private roomListAdapter adapter;
     public List<MeetingListEntity> mMeetingLists;
     AnyrtcMeet mAnyrtcMeet;
 
@@ -123,7 +123,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
 //        meetingListEntity.setMeetingid("11111111");
 //        meetingListEntity.setMeetname("hezi");
 //        mMeetingLists.add(meetingListEntity);
-        adapter = new RoomListAdapter(mMeetingLists, mContext);
+        adapter = new roomListAdapter(mMeetingLists, mContext);
         listView.setAdapter(adapter);
         listView.setFocusable(true);
         listView.setOnItemClickListener(listItemListener);
@@ -311,7 +311,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                     if (hasFocus) {
                         llayoutMeeting.animate().translationX(0).setDuration(200).start();
                         imageButton.setVisibility(View.GONE);
-                        button13.setBackgroundColor(getResources().getColor(R.color.transparent));
+                        button13.setBackgroundResource(R.drawable.button_default);
                         scaleImageView.setVisibility(View.VISIBLE);
                         if (scaleAnimation == null) {
                             scaleAnimation = new ScaleAnimation(0, 1, 0, 1, imageWidth, imageHeight / 2);
@@ -440,7 +440,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 if (imageButton != null) {
                     if (hasFocus) {
                         imageButton.setVisibility(View.GONE);
-                        button13.setBackgroundResource(R.drawable.selector_btn_ok);
+                        button13.setBackgroundResource(R.drawable.btn_ok_selector);
                     } else {
                         imageButton.setVisibility(View.VISIBLE);
                         button13.setBackgroundResource(R.drawable.button_default);
