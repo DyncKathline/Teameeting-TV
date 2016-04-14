@@ -41,14 +41,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:visibility="invisible"
-            >
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_full_screen"
                 style="@style/btn_control"
                 android:drawableTop="@drawable/btnview_window_icon_selector"
+                android:focusable="true"
                 android:text="全屏" />
 
             <Button
@@ -64,33 +63,33 @@
                 android:text="挂断" />
         </org.dync.tv.teameeting.view.RoomControls>
     </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/rlayout_call_wait"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"
-        >
+        android:visibility="invisible">
 
         <ProgressBar
+            android:id="@+id/pbar_wait"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/pbar_wait"
-            android:layout_gravity="center"
-
             android:layout_above="@+id/textView2"
+
             android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
             android:layout_marginBottom="27dp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="请稍等,正在加载远端像............"
-            android:layout_gravity="center"
             android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="219dp" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="219dp"
+            android:text="请稍等,正在加载远端像............" />
     </RelativeLayout>
 </RelativeLayout>
