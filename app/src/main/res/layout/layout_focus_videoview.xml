@@ -3,17 +3,17 @@
     android:id="@+id/llayout_focus_videoview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="gone"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <ImageView
         android:id="@+id/iv_localview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="67"
+        android:background="@drawable/videoview_focus_selector"
         android:clickable="false"
-        android:focusable="false"
-        android:background="@drawable/videoview_focus_selector" />
+        android:focusable="false" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,38 +26,38 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
             android:background="@drawable/videoview_focus_selector"
-            android:nextFocusLeft="@+id/iv_remoteview3"
-            android:nextFocusUp="@+id/btn_audio_soundon"
+            android:clickable="false"
+            android:focusable="false"
             android:nextFocusDown="@+id/btn_audio_soundon"
-            android:nextFocusRight="@+id/iv_remoteview2" />
+            android:nextFocusLeft="@+id/iv_remoteview3"
+            android:nextFocusRight="@+id/iv_remoteview2"
+            android:nextFocusUp="@+id/btn_audio_soundon" />
 
         <ImageView
             android:id="@+id/iv_remoteview2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
             android:background="@drawable/videoview_focus_selector"
-            android:nextFocusLeft="@+id/iv_remoteview1"
-            android:nextFocusUp="@+id/btn_audio_soundon"
+            android:clickable="true"
+            android:focusable="false"
             android:nextFocusDown="@+id/btn_audio_soundon"
-            android:nextFocusRight="@+id/iv_remoteview3" />
+            android:nextFocusLeft="@+id/iv_remoteview1"
+            android:nextFocusRight="@+id/iv_remoteview3"
+            android:nextFocusUp="@+id/btn_audio_soundon" />
 
         <ImageView
             android:id="@+id/iv_remoteview3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
             android:background="@drawable/videoview_focus_selector"
-            android:nextFocusLeft="@+id/iv_remoteview2"
-            android:nextFocusUp="@+id/btn_audio_soundon"
+            android:clickable="true"
+            android:focusable="false"
             android:nextFocusDown="@+id/btn_audio_soundon"
-            android:nextFocusRight="@+id/iv_remoteview1" />
+            android:nextFocusLeft="@+id/iv_remoteview2"
+            android:nextFocusRight="@+id/iv_remoteview1"
+            android:nextFocusUp="@+id/btn_audio_soundon" />
     </LinearLayout>
 </LinearLayout>

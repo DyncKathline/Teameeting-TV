@@ -1,10 +1,7 @@
 package org.dync.tv.teameeting.activity;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -21,6 +18,7 @@ import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.bean.ReqSndMsgEntity;
+import org.dync.tv.teameeting.fragment.BaseFragment;
 import org.dync.tv.teameeting.fragment.CallRingFragment;
 import org.dync.tv.teameeting.fragment.CallRingMeFragment;
 import org.dync.tv.teameeting.fragment.MeetingFragment;
@@ -33,7 +31,6 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends BaseMeetingActivity implements View.OnClickListener, View.OnFocusChangeListener {
     private FragmentManager fm;
-    private Fragment mContent;//显示当前的Fragment
     private MeetingFragment mMeetingFragment;
     private CallRingFragment mCallRingFragment;
     private CallRingMeFragment mCallRingMeFragment;
@@ -73,6 +70,8 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     @Bind(R.id.iv_remoteview3)
     ImageView ivRemoteView3;
 
+    boolean isExist = false;
+
     /**
      * 有人进会回调该方法;
      *
@@ -83,23 +82,50 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         if (mDebug)
             Log.e(TAG, "onRequesageMsg: " + reqSndMsg.toString());
         if (MeetType.MEET_NO_EXIST == meetType) {
-            //没有入会
+            Log.e("TAG", "没有人入会议");
             meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
-            switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //打开取消的按钮
+            switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
+            goneLayout(true);
+            isExist = false;
+            mCallRingMeFragment.requestFocus();
 
         } else if (MeetType.MEET_EXIST == meetType) {
             if (joinMeetistEntity != null && meetingListEntity != null && joinMeetistEntity.getMeetingid().equals(meetingListEntity.getMeetingid())) {
+                Log.e("TAG", "MeetType.MEET_EXIST == meetType");
+                isExist = false;
                 return;
             } else {
-                //有人进入其他会议,;
+                //有人进入其他会议
+                Log.e("TAG", "有人进入其他会议");
+                isExist = true;
                 meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
-                switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //打开接通或者取消的按钮
+                switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
+                goneLayout(true);
+                mCallRingMeFragment.requestFocus();
             }
         }
-        //switchContent(mMeetingFragment,mCallRingFragment, 1);
         sendPostCall(true);
     }
 
+    @Override
+    public void requestFocus() {
+        btnAudioSoundon.requestFocus();
+//        setIsFocus(true);
+        goneLayout(false);
+    }
+
+    @Override
+    public void goneLayout(boolean gone) {
+        if (gone) {
+            lLayoutControl.hide();
+            lLayoutControl.setVisibility(View.GONE);
+            llayoutFocusVideView.setVisibility(View.GONE);
+        } else {
+            lLayoutControl.show();
+            lLayoutControl.setVisibility(View.VISIBLE);
+            llayoutFocusVideView.setVisibility(View.VISIBLE);
+        }
+    }
 
     private void sendPostCall(boolean isRecenived) {
         Message msg = Message.obtain();
@@ -122,6 +148,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         initListener();
     }
 
+
     private void initListener() {
         btnMainHangup.setOnClickListener(this);
         btnAudioSoundon.setOnClickListener(this);
@@ -142,11 +169,10 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             public void onClickCall(String phone) {
                 Log.e(TAG, "onClickCall: ----呼叫");
                 // 拨号上网.
-                hideAllContent();
                 enterMeeting(phone);
-                //switchContent(mMeetingFragment, mCallRingFragment, TAG_FRAG_CALL);
                 sendPostCall(false);
-                showVideoViewLayout();
+                hideAllContent();
+                goneLayout(false);
                 btnAudioSoundon.requestFocus();
             }
         });
@@ -157,11 +183,12 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         mCallRingFragment.setOnCallRingListener(new CallRingFragment.CallRingListener() {
             @Override
             public void onClickHungUp() {
-
-                if (meetType == MeetType.MEET_EXIST) {
-                    hideAllContent(); //影藏全部
+                if (meetType == MeetType.MEET_EXIST && !isExist) {
+                    hideAllContent();
                 } else {
                     switchContent(mCallRingFragment, mMeetingFragment, TAG_FRAG_MEETING);
+                    goneLayout(true);
+                    mMeetingFragment.requestFocus();
                 }
 
             }
@@ -174,41 +201,54 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         mCallRingMeFragment.setOnCallRingListener(new CallRingMeFragment.CallRingMeListener() {
             @Override
             public void onClickHungUp() {
-                if (meetType == MeetType.MEET_EXIST) {
-                    hideAllContent(); //影藏全部
+                if (meetType == MeetType.MEET_EXIST && !isExist) {
+                    hideAllContent();
                 } else {
                     switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING);
+                    goneLayout(true);
+                    mMeetingFragment.requestFocus();
                 }
 
             }
 
             @Override
             public void onClickAccept() {
-                // switchContent(mMeetingFragment, 0);
-                hideAllContent(); //影藏全部
+                hideAllContent();
                 joinAnyrtcMeet(meetingListEntity);
+                goneLayout(false);
+                btnAudioSoundon.requestFocus();
             }
 
         });
 
     }
 
-    private void showVideoViewLayout() {
+    /*private void showVideoViewLayout() {
         lLayoutControl.show();
+        btnAudioSoundon.setFocusable(true);
+        btnMainHangup.setFocusable(true);
         llayoutFocusVideView.setVisibility(View.VISIBLE);
     }
 
     private void hideVideViewLayout() {
         lLayoutControl.hide();
+        btnAudioSoundon.setFocusable(false);
+        btnMainHangup.setFocusable(false);
         llayoutFocusVideView.setVisibility(View.GONE);
-    }
+    }*/
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lLayoutControl.hide();
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (mMeetingFragment != null) {
             mMeetingFragment.initMeetingFragmentLayout();
+            goneLayout(true);
         }
     }
 
@@ -231,7 +271,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
             if (join == true) {
                 meetType = MeetType.MEET_EXIST;
-                showVideoViewLayout();
+                goneLayout(false);
                 joinMeetistEntity = meetingListEntity;
             } else {
                 meetType = MeetType.MEET_NO_EXIST;
@@ -245,7 +285,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     private void destoryJoinMeet() {
         if (meetType == MeetType.MEET_EXIST) {
             joinMeetistEntity = null;
-            mAnyrtcMeet.SwitchRoom(000000000 + "");
+            boolean tag = mAnyrtcMeet.SwitchRoom(000000000 + "");
+            if (mDebug)
+                Log.e(TAG, "destoryJoinMeet: " + tag);
             meetType = MeetType.MEET_EXIST;
 
         } else {
@@ -267,14 +309,13 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     /**
      * 设置音频按钮
      */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setLocalAudioEnabled() {
         if (isLocaAudioFlag) {
             mAnyrtcMeet.SetLocalAudioEnabled(false);
-            btnAudioSoundon.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_soundoff_icon_selector), null, null);
+            //btnAudioSoundon.setCompoundDrawables(null, getDrawable(R.drawable.btnview_soundoff_icon_selector), null, null);
         } else {
             mAnyrtcMeet.SetLocalAudioEnabled(true);
-            btnAudioSoundon.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_soundon_icon_selector), null, null);
+            //btnAudioSoundon.setCompoundDrawablesRelativeWithIntrinsicBounds(null, getDrawable(R.drawable.btnview_soundon_icon_selector), null, null);
         }
         isLocaAudioFlag = !isLocaAudioFlag;
     }
@@ -289,34 +330,40 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     }
 
     /**
-     * fragment 切换，不会重新加载
+     * fragment 切换，不会重新加载，这里使用commit()方法会出现
+     * java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
+     * 使用commitAllowingStateLoss()方法替代
      *
-     * @param to       显示的Fragment  ifPostition =3 时候要影藏全部
-     * @param position 给要添加的Fragment设置tag
+     * @param from     要隐藏的Fragment
+     * @param to       要显示的Fragment
+     * @param position 给要显示的Fragment设置tag
      */
-    public void switchContent(Fragment from, Fragment to, int position) {
-        mContent = from;
-        if (mContent != to) {
+    public void switchContent(BaseFragment from, BaseFragment to, int position) {
+        if (from != to) {
             FragmentTransaction ft = fm.beginTransaction();
             if (!to.isAdded()) {    // 先判断是否被add过
-                ft.hide(mContent).add(R.id.flayout_content, to, tags[position]).commit(); // 隐藏当前的fragment，add下一个到Activity中
+                ft.hide(from).add(R.id.flayout_content, to, tags[position]).commitAllowingStateLoss(); // 隐藏当前的fragment，add下一个到Activity中
             } else {
-                ft.hide(mContent).show(to).commit(); // 隐藏当前的fragment，显示下一个
+                ft.hide(from).show(to).commitAllowingStateLoss(); // 隐藏当前的fragment，显示下一个
             }
-            mContent = to;
         }
+        from.goneLayout(true);
+        to.goneLayout(false);
     }
 
     /**
-     * 影藏全部
+     * 隐藏全部Fragment
      */
     public void hideAllContent() {
         fm = getSupportFragmentManager();
         mMeetingFragment = (MeetingFragment) fm.findFragmentByTag(tags[TAG_FRAG_MEETING]);
         mCallRingMeFragment = (CallRingMeFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL_ME]);
         mCallRingFragment = (CallRingFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL]);
-        if (mMeetingFragment != null && mCallRingFragment != null) {
+        if (mMeetingFragment != null && mCallRingFragment != null && mCallRingMeFragment != null) {
             fm.beginTransaction().hide(mMeetingFragment).hide(mCallRingFragment).hide(mCallRingMeFragment).commit();
+            mMeetingFragment.goneLayout(true);
+            mCallRingMeFragment.goneLayout(true);
+            mCallRingFragment.goneLayout(true);
         }
     }
 
@@ -328,15 +375,14 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             mMeetingFragment = new MeetingFragment();
             mCallRingFragment = new CallRingFragment();
             mCallRingMeFragment = new CallRingMeFragment();
-            mContent = mMeetingFragment;
             tags[0] = "0";
-            ft.add(R.id.flayout_content, mContent, tags[TAG_FRAG_MEETING]);
+            ft.add(R.id.flayout_content, mMeetingFragment, tags[TAG_FRAG_MEETING]);
             tags[1] = "1";
             ft.add(R.id.flayout_content, mCallRingMeFragment, tags[TAG_FRAG_CALL_ME]).hide(mCallRingMeFragment);
             tags[2] = "2";
             ft.add(R.id.flayout_content, mCallRingFragment, tags[TAG_FRAG_CALL]).hide(mCallRingFragment);
             ft.commit();
-        } else {
+        }else {
             mMeetingFragment = (MeetingFragment) fm.findFragmentByTag(tags[TAG_FRAG_MEETING]);
             mCallRingFragment = (CallRingFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL_ME]);
             mCallRingMeFragment = (CallRingMeFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL]);
@@ -446,15 +492,34 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         EventBus.getDefault().post(msg);
     }
 
+    //    private int peopleNum = 1;//在会议的人数，默认是1，即就只有自己一个人
     @Override
     void onPeopleNumChange(int peopleNum) {
         Log.e(TAG, "onPeopleNumChange: " + peopleNum);
         if (peopleNum > 0) {
             rLayoutWait.setVisibility(View.GONE);
+            switch (peopleNum) {
+                case 1:
+                    ivRemoteView1.setFocusable(true);
+                    ivRemoteView2.setFocusable(false);
+                    ivRemoteView3.setFocusable(false);
+                    break;
+                case 2:
+                    ivRemoteView1.setFocusable(true);
+                    ivRemoteView2.setFocusable(true);
+                    ivRemoteView3.setFocusable(false);
+                    break;
+                case 3:
+                    ivRemoteView1.setFocusable(true);
+                    ivRemoteView2.setFocusable(true);
+                    ivRemoteView3.setFocusable(true);
+                    break;
+            }
         } else {
             //当人数为0的时候显示
-
             switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
+            goneLayout(true);
+            mMeetingFragment.requestFocus();
             //切换房间
             destoryJoinMeet();
             if (meetType == MeetType.MEET_EXIST) {
@@ -473,7 +538,11 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 mExitTime = System.currentTimeMillis();
             } else {
                 mNetWork.signOut(TVAPP.getmTVAPP().getAuthorization());
+                destoryJoinMeet();
+
                 this.finish();
+
+                System.exit(0);
             }
             return true;
         }
@@ -489,6 +558,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         int y = 0;
         int width = 0;
         int height = 0;
+        int[] lic = new int[2];
         switch (v.getId()) {
             case R.id.btn_audio_soundon:
                 Log.e(TAG, "onClick: " + "打开或者关闭声音");
@@ -497,7 +567,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
             case R.id.btn_main_hangup:
                 Log.e(TAG, "onClick: " + "离开");
-                hideVideViewLayout();
+                goneLayout(true);
                 switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
                 mMeetingFragment.requestFocus();
                 destoryJoinMeet();
@@ -505,22 +575,25 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             case R.id.iv_localview:
                 break;
             case R.id.iv_remoteview1:
-                x = (int) ivRemoteView1.getX();
-                y = (int) ivRemoteView1.getY();
+
+
+                ivRemoteView1.getLocationOnScreen(lic);
                 break;
             case R.id.iv_remoteview2:
-                x = (int) ivRemoteView2.getX();
-                y = (int) ivRemoteView2.getY();
+
+                ivRemoteView2.getLocationOnScreen(lic);
                 break;
             case R.id.iv_remoteview3:
-                x = (int) ivRemoteView3.getX();
-                y = (int) ivRemoteView3.getY();
+                ivRemoteView3.getLocationOnScreen(lic);
                 break;
         }
         Log.e(TAG, "-----onClick-----X= " + x + ",Y= " + y);
         width = ivRemoteView1.getWidth();
         height = ivRemoteView1.getHeight();
-        mAnyrtcViews.switchLocaToRomoteScreen(x + width / 2, y + height / 2);
+        Log.e(TAG, "-----onClick-----X= " + x + ",Y= " + y);
+        if (mAnyrtcViews != null) {
+            mAnyrtcViews.switchLocaToRomoteScreen(lic[0] + width / 2, lic[1] + height / 2);
+        }
     }
 
     @Override

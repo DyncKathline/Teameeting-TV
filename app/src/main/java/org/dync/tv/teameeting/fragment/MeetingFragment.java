@@ -92,7 +92,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     private int oldPosition = -1;//光标焦点移动下一个焦点时前一个位置，此处与buttonX后面的X数字一致，如“1”，即button1的位置
     private ScaleAnimation scaleAnimation;
     private int duration = 0;//光标移动的时长
-    private RoomListAdapter adapter;
+    private roomListAdapter adapter;
     public List<MeetingListEntity> mMeetingLists;
     AnyrtcMeet mAnyrtcMeet;
 
@@ -110,8 +110,20 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         initData();
     }
 
+    @Override
     public void requestFocus() {
         button1.requestFocus();
+//        setIsFocus(true);
+        goneLayout(false);
+    }
+
+    @Override
+    public void goneLayout(boolean gone) {
+        if (gone) {
+            llayoutMeeting.setVisibility(View.GONE);
+        } else {
+            llayoutMeeting.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initData() {
@@ -123,7 +135,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
 //        meetingListEntity.setMeetingid("11111111");
 //        meetingListEntity.setMeetname("hezi");
 //        mMeetingLists.add(meetingListEntity);
-        adapter = new RoomListAdapter(mMeetingLists, mContext);
+        adapter = new roomListAdapter(mMeetingLists, mContext);
         listView.setAdapter(adapter);
         listView.setFocusable(true);
         listView.setOnItemClickListener(listItemListener);

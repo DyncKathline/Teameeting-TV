@@ -62,6 +62,16 @@ public abstract class BaseFragment extends Fragment {
 
     protected abstract void init();
 
+    /**
+     * 使布局内的控件获得焦点并聚焦到它身上
+     */
+    public abstract void requestFocus();
+
+    /**
+     * 是否隐藏布局，true为隐藏，即setVisibility(View.GONE)；false为显示，即setVisibility(View.VISIBLE)
+     */
+    public abstract void goneLayout(boolean gone);
+
     @Override
     public void onStart() {
         super.onStart();

@@ -502,7 +502,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             int size = GetVideoRenderSize();
             if (size == 0) {
                 remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, 0, 0, 0, 100, 100);
-            } else if (size == 1) {
+            } else {
                 remoteRender = new VideoView(peerId, mVideoView.getContext(), mRootEglBase, size, (size - 1) * 33, Loc_SUB_HEIGHT, 33, 33);
                 remoteRender.mView.setZOrderMediaOverlay(true);
             }
