@@ -56,6 +56,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract void initMeet();
 
     /**
+     * 使布局内的控件获得焦点并聚焦到它身上
+     */
+    public abstract void requestFocus();
+
+    /**
+     * 是否隐藏布局，true为隐藏，即setVisibility(View.GONE)；false为显示，即setVisibility(View.VISIBLE)
+     */
+    public abstract void goneLayout(boolean gone);
+
+    /**
      * 注册消息接受者
      */
     private void registerObserverClinet() {

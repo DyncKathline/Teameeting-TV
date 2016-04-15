@@ -35,7 +35,7 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     @Bind(R.id.LoadingHalo4)
     public ImageView LoadingHalo4;
     @Bind(R.id.btn_hungUp)
-    public Button callHungUp;
+    public Button btnCallHungUp;
 
     private MediaPlayer mediaPlayer;
     private boolean isStartAnim = false;//是否关闭动画
@@ -93,7 +93,7 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
 
 
     private void initListener() {
-        callHungUp.setOnClickListener(this);
+        btnCallHungUp.setOnClickListener(this);
     }
 
     public void startAnim() {
@@ -105,6 +105,22 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
     public void stopAnim() {
         isStartAnim = false;
         handler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void requestFocus() {
+        btnCallHungUp.requestFocus();
+//        setIsFocus(true);
+        goneLayout(false);
+    }
+
+    @Override
+    public void goneLayout(boolean gone) {
+        if (gone){
+            llayoutCallRing.setVisibility(View.GONE);
+        }else {
+            llayoutCallRing.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

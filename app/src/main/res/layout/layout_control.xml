@@ -21,10 +21,10 @@
             style="@style/btn_control"
             android:drawableTop="@drawable/btnview_soundon_icon_selector"
             android:focusable="true"
-            android:nextFocusDown="@+id/iv_remoteview1"
-            android:nextFocusUp="@+id/iv_remoteview1"
-            android:nextFocusLeft="@+id/btn_main_hangup"
-            android:nextFocusRight="@+id/btn_main_hangup"
+            android:nextFocusDown="@+id/btn_main_hangup"
+            android:nextFocusUp="@+id/btn_main_hangup"
+            android:nextFocusLeft="@+id/iv_remoteview1"
+            android:nextFocusRight="@+id/iv_remoteview1"
             android:text="静音" />
 
         <Button
@@ -32,10 +32,10 @@
             style="@style/btn_control"
             android:drawableTop="@drawable/btnview_hungup_icon_selector"
             android:focusable="true"
-            android:nextFocusDown="@+id/iv_remoteview1"
-            android:nextFocusUp="@+id/iv_remoteview1"
-            android:nextFocusLeft="@+id/btn_audio_soundon"
-            android:nextFocusRight="@+id/btn_audio_soundon"
+            android:nextFocusDown="@+id/btn_audio_soundon"
+            android:nextFocusUp="@+id/btn_audio_soundon"
+            android:nextFocusLeft="@+id/iv_remoteview1"
+            android:nextFocusRight="@+id/iv_remoteview1"
             android:text="挂断" />
     </org.dync.tv.teameeting.view.RoomControls>
 </LinearLayout>
