@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -31,6 +32,7 @@ import java.util.Map;
  * Created by Eric on 2016/3/4.
  */
 public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
+    String TAG = this.getClass().getSimpleName();
     private static final int SUB_X = 50;
     private static final int SUB_Y = 50;
     private static final int SUB_WIDTH = 50;
@@ -78,6 +80,8 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         public VideoTrack mVideoTrack = null;
         public VideoRenderer mRenderer = null;
 
+        public ImageView mAudioView = null;
+
         public VideoView(String strPeerId, Context ctx, EglBase eglBase, int index, int x, int y, int w, int h) {
             this.strPeerId = strPeerId;
             this.index = index;
@@ -100,6 +104,15 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
 
         public Boolean Fullscreen() {
             return w == 100 || h == 100;
+        }
+
+        /**
+         * 判断是否是最大的像
+         *
+         * @return
+         */
+        public boolean maxScreen() {
+            return w == 100 || h == Loc_SUB_HEIGHT;
         }
 
         /**
@@ -149,7 +162,25 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         }
 
 
-        private boolean voiceFalg;
+        public void setAudioView(ImageView imageView) {
+            mAudioView = imageView;
+            updataAudioView();
+        }
+
+        public void updataAudioView() {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mAudioView.getLayoutParams();
+            layoutParams.leftMargin = (mScreenWidth / 100) * x;
+            layoutParams.topMargin = (mScreenHeight / 100) * y;
+            mAudioView.setLayoutParams(layoutParams);
+        }
+
+        public void upAudioView(boolean isFlag) {
+            if (isFlag) {
+                mAudioView.setImageResource(R.drawable.video_soundon_focus);
+            } else {
+                mAudioView.setImageResource(R.drawable.video_soundoff_focus);
+            }
+        }
     }
 
     private boolean mAutoLayout;
@@ -189,10 +220,35 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         // mLocalRender.mView.invalidate();
     }
 
+    /**
+     * 创建imageView
+     *
+     * @return
+     */
+    private ImageView createImageView() {
+        ImageView imageAudio = new ImageView(context);
+        imageAudio.setImageResource(R.drawable.video_soundon_focus);
+        imageAudio.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        RelativeLayout.LayoutParams layoutParamsVoice = new RelativeLayout.LayoutParams(100, 100);
+
+        //imageAudio.setVisibility(View.GONE);
+        mVideoView.addView(imageAudio, layoutParamsVoice);
+        return imageAudio;
+    }
+
+
     public AnyRTCViewsTV(RelativeLayout videoView) {
         AppRTCUtils.assertIsTrue(videoView != null);
         mAutoLayout = false;
         mVideoView = videoView;
+        context = videoView.getContext();
+        mScreenWidth = ScreenUtils.getScreenWidth(context);
+        int statusHeight = ScreenUtils.getStatusHeight(context);
+        int screenHeight = ScreenUtils.getScreenHeight(context);
+
+        mScreenHeight = screenHeight - statusHeight;
+        Log.e(TAG, screenHeight + "AnyRTCViewsTV:----statusHeight " + statusHeight + "---mScreenWidth----" + mScreenWidth);
+
         mVideoView.setOnTouchListener(this);
         mRootEglBase = EglBase.create();
         mRemoteRenders = new HashMap<>();
@@ -251,20 +307,40 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         return null;
     }
 
+    /**
+     * 获取到占据布局最大的像
+     *
+     * @return
+     */
+    private VideoView GetMaxScreenOr() {
+        if (mLocalRender != null && mLocalRender.Fullscreen())
+            return mLocalRender;
+        Iterator<Map.Entry<String, VideoView>> iter = mRemoteRenders.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String, VideoView> entry = iter.next();
+            //* String peerId = entry.getKey();
+            VideoView render = entry.getValue();
+            if (render.maxScreen())
+                return render;
+        }
+        return null;
+    }
 
     /**
-     * 缩小本地的像50%
+     * 全屏
      */
-    public void lessenLocalRender() {
-
+    public void maxLocalRenderFullScreen() {
         int index, x, y, w, h;
         index = mLocalRender.index;
-        mLocalRender.x = mLocalRender.x / 2 + SUB_DIS_X;
-        mLocalRender.y = mLocalRender.y / 2 + SUB_DIS_Y;
-        mLocalRender.w = mLocalRender.w / 2 - SUB_DIS_X;
-        mLocalRender.h = mLocalRender.h / 2;
+        mLocalRender.x = 0;
+        mLocalRender.y = 0;
+        mLocalRender.w = 100;
+        mLocalRender.h = Loc_SUB_HEIGHT;
         mLocalRender.mLayout.setPosition(mLocalRender.x, mLocalRender.y, mLocalRender.w, mLocalRender.h);
-        mLocalRender.mView.requestLayout();
+        //mLocalRender.mView.requestLayout();
+        PercentFrameLayout layout_a = mLocalRender.mLayout;
+        SurfaceViewRenderer view_a = mLocalRender.mView;
+        mLocalRender.updateVideoLayoutView(layout_a, view_a);
     }
 
 
@@ -311,6 +387,21 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
     }
 
 
+    /**
+     * updateMediaImage
+     *
+     * @param publishId
+     * @param flag
+     */
+
+    public void upAudioImageView(String publishId, boolean flag) {
+
+        if (mRemoteRenders.containsKey(publishId)) {
+            VideoView videoView = mRemoteRenders.get(publishId);
+            videoView.upAudioView(flag);
+        }
+    }
+
     private void SwitchViewPosition(VideoView view1, VideoView view2) {
         AppRTCUtils.assertIsTrue(view1 != null && view2 != null);
         int index, x, y, w, h;
@@ -338,6 +429,45 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
 
         view1.updateVideoLayoutView(layout_b, view_b);
         view2.updateVideoLayoutView(layout_a, view_a);
+    }
+
+    /**
+     * 进行大小像的切换；
+     *
+     * @param view1
+     * @param fullscrnView
+     */
+    private void SwitchViewToMaxscreen(VideoView view1, VideoView fullscrnView) {
+        AppRTCUtils.assertIsTrue(view1 != null && fullscrnView != null);
+        int index, x, y, w, h;
+        index = view1.index;
+        x = view1.x;
+        y = view1.y;
+        w = view1.w;
+        h = view1.h;
+
+        view1.index = fullscrnView.index;
+        view1.x = fullscrnView.x;
+        view1.y = fullscrnView.y;
+        view1.w = fullscrnView.w;
+        view1.h = fullscrnView.h;
+
+        fullscrnView.index = index;
+        fullscrnView.x = x;
+        fullscrnView.y = y;
+        fullscrnView.w = w;
+        fullscrnView.h = h;
+
+        //
+        PercentFrameLayout layout_a = view1.mLayout;
+        SurfaceViewRenderer view_a = view1.mView;
+
+        PercentFrameLayout layout_b = fullscrnView.mLayout;
+        SurfaceViewRenderer view_b = fullscrnView.mView;
+
+        //进行像的交换；
+        view1.updateVideoLayoutView(layout_b, view_b);
+        fullscrnView.updateVideoLayoutView(layout_a, view_a);
     }
 
     /**
@@ -467,25 +597,6 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         }
     }
 
-    /**
-     * 全屏
-     */
-    public void maxLocalRenderFullScreen() {
-        int index, x, y, w, h;
-        index = mLocalRender.index;
-        mLocalRender.x = 0;
-        mLocalRender.y = 0;
-        mLocalRender.w = 100;
-        mLocalRender.h = Loc_SUB_HEIGHT;
-        mLocalRender.mLayout.setPosition(mLocalRender.x, mLocalRender.y, mLocalRender.w, mLocalRender.h);
-        //mLocalRender.mView.requestLayout();
-        PercentFrameLayout layout_a = mLocalRender.mLayout;
-        SurfaceViewRenderer view_a = mLocalRender.mView;
-
-        mLocalRender.updateVideoLayoutView(layout_a, view_a);
-
-    }
-
 
     /**
      * Implements for AnyRTCViewEvents.
@@ -508,7 +619,6 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             }
 
             mVideoView.addView(remoteRender.mLayout);
-
             remoteRender.mLayout.setPosition(remoteRender.x, remoteRender.y, remoteRender.w, remoteRender.h);
             remoteRender.mView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
             remoteRender.mRenderer = new VideoRenderer(remoteRender.mView);
@@ -519,6 +629,9 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             if (mAutoLayout && mRemoteRenders.size() == 1 && mLocalRender != null) {
                 SwitchViewToFullscreen(remoteRender, mLocalRender);
             }
+
+            ImageView imageView = createImageView();
+            remoteRender.setAudioView(imageView);
             setScaleAnimation(remoteRender.mView);
             peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
@@ -554,13 +667,6 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         }
         mLocalRender.mVideoTrack = localTrack;
 
-        ImageView imageView = new ImageView(mVideoView.getContext());
-        imageView.setImageResource(R.drawable.video_soundoff_normal);
-
-        RelativeLayout.LayoutParams layoutParamsVoice = new RelativeLayout.LayoutParams(100, 100);
-        layoutParamsVoice.leftMargin = ScreenUtils.getScreenWidth(mVideoView.getContext()) - 100;
-        layoutParamsVoice.topMargin = 50;
-        imageView.setLayoutParams(layoutParamsVoice);
 
         mVideoView.addView(mLocalRender.mLayout);
 
@@ -569,7 +675,10 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         mLocalRender.mView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
         mLocalRender.mRenderer = new VideoRenderer(mLocalRender.mView);
         mLocalRender.mVideoTrack.addRenderer(mLocalRender.mRenderer);
-        mVideoView.addView(imageView, layoutParamsVoice);
+
+        //添加视频控制按钮
+        ImageView imageView = createImageView();
+        mLocalRender.setAudioView(imageView);
 
 
     }
@@ -587,6 +696,8 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
 
     @Override
     public void OnRtcRemoteAVStatus(String peerId, boolean audioEnable, boolean videoEnable) {
-
+        Log.e("xbl", "OnRtcRemoteAVStatus:------------------ " + audioEnable);
+        //控制打开还是关闭;
+        upAudioImageView(peerId, audioEnable);//更新音频控制
     }
 }
