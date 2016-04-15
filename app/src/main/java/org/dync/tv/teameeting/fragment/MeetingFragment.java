@@ -92,9 +92,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     private int oldPosition = -1;//光标焦点移动下一个焦点时前一个位置，此处与buttonX后面的X数字一致，如“1”，即button1的位置
     private ScaleAnimation scaleAnimation;
     private int duration = 0;//光标移动的时长
-    private final int TRANSLATION_TIME_DEFAULT = 0;//默认的执行的动画时间
-    private final int TRANSLATION_TIME = 100;//执行的动画时间
-    private RoomListAdapter adapter;
+    private roomListAdapter adapter;
     public List<MeetingListEntity> mMeetingLists;
     AnyrtcMeet mAnyrtcMeet;
 
@@ -137,7 +135,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
 //        meetingListEntity.setMeetingid("11111111");
 //        meetingListEntity.setMeetname("hezi");
 //        mMeetingLists.add(meetingListEntity);
-        adapter = new RoomListAdapter(mMeetingLists, mContext);
+        adapter = new roomListAdapter(mMeetingLists, mContext);
         listView.setAdapter(adapter);
         listView.setFocusable(true);
         listView.setOnItemClickListener(listItemListener);
@@ -292,6 +290,9 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 if (mMeetingListener != null) {
                     Log.e(TAG, "onClick: ");
                     mMeetingListener.onClickCall(phone);
+                    //Message msg = Message.obtain();
+                    //msg.what = EventType.MSG_CALL_START.ordinal();//分别发送到CallRingFragment、MeetingFragment
+                    //EventBus.getDefault().post(msg);
                 }
                 break;
             case R.id.listView:
@@ -320,17 +321,17 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 duration = 0;
                 if (imageButton != null) {
                     if (hasFocus) {
-                        llayoutMeeting.animate().translationX(0).setDuration(TRANSLATION_TIME).start();
+                        llayoutMeeting.animate().translationX(0).setDuration(200).start();
                         imageButton.setVisibility(View.GONE);
                         button13.setBackgroundResource(R.drawable.button_default);
                         scaleImageView.setVisibility(View.VISIBLE);
                         if (scaleAnimation == null) {
                             scaleAnimation = new ScaleAnimation(0, 1, 0, 1, imageWidth, imageHeight / 2);
                         }
-                        scaleAnimation.setDuration(TRANSLATION_TIME);
+                        scaleAnimation.setDuration(200);
                         scaleImageView.startAnimation(scaleAnimation);
                     } else {
-                        llayoutMeeting.animate().translationX(-imageWidth).setDuration(TRANSLATION_TIME).start();
+                        llayoutMeeting.animate().translationX(-imageWidth).setDuration(200).start();
                         imageButton.setVisibility(View.VISIBLE);
                         scaleImageView.setVisibility(View.GONE);
                         requestFocus();
@@ -341,9 +342,9 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationX = 0;
                 translationY = 0;
                 if (oldPosition == 0 || oldPosition == 13) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 preOldPosition = 1;
                 oldPosition = 1;
@@ -353,15 +354,15 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationY = 0;
                 preOldPosition = 2;
                 oldPosition = 2;
-                duration = TRANSLATION_TIME;
+                duration = 200;
                 break;
             case R.id.button3:
                 translationX = buttonWidth * 2;
                 translationY = 0;
                 if (oldPosition == 14) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 preOldPosition = 3;
                 oldPosition = 3;
@@ -370,9 +371,9 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationX = 0;
                 translationY = buttonHeight;
                 if (oldPosition == 0) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 oldPosition = 4;
                 break;
@@ -380,15 +381,15 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationX = buttonWidth;
                 translationY = buttonHeight;
                 oldPosition = 5;
-                duration = TRANSLATION_TIME;
+                duration = 200;
                 break;
             case R.id.button6:
                 translationX = buttonWidth * 2;
                 translationY = buttonHeight;
                 if (oldPosition == 14) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 oldPosition = 6;
                 break;
@@ -396,9 +397,9 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationX = 0;
                 translationY = buttonHeight * 2;
                 if (oldPosition == 0) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 oldPosition = 7;
                 break;
@@ -406,15 +407,15 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationX = buttonWidth;
                 translationY = buttonHeight * 2;
                 oldPosition = 8;
-                duration = TRANSLATION_TIME;
+                duration = 200;
                 break;
             case R.id.button9:
                 translationX = buttonWidth * 2;
                 translationY = buttonHeight * 2;
                 if (oldPosition == 14) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 oldPosition = 9;
                 break;
@@ -422,9 +423,9 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationX = 0;
                 translationY = buttonHeight * 3;
                 if (oldPosition == 0) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 preOldPosition = 10;
                 oldPosition = 10;
@@ -434,15 +435,15 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 translationY = buttonHeight * 3;
                 preOldPosition = 11;
                 oldPosition = 11;
-                duration = TRANSLATION_TIME;
+                duration = 200;
                 break;
             case R.id.button12:
                 translationX = buttonWidth * 2;
                 translationY = buttonHeight * 3;
                 if (preOldPosition == 1 || preOldPosition == 2 || preOldPosition == 3 || preOldPosition == 10 || preOldPosition == 11) {
-                    duration = TRANSLATION_TIME_DEFAULT;
+                    duration = 0;
                 } else {
-                    duration = TRANSLATION_TIME;
+                    duration = 200;
                 }
                 preOldPosition = 12;
                 oldPosition = 12;
@@ -452,13 +453,13 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                     if (hasFocus) {
                         imageButton.setVisibility(View.GONE);
                         button13.setBackgroundResource(R.drawable.btn_ok_selector);
-                        oldPosition = 13;
                     } else {
                         imageButton.setVisibility(View.VISIBLE);
                         button13.setBackgroundResource(R.drawable.button_default);
                     }
                 }
-                duration = TRANSLATION_TIME_DEFAULT;
+                duration = 0;
+                oldPosition = 13;
                 break;
             case R.id.listView:
                 if (imageButton != null && adapter != null) {
@@ -470,7 +471,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                         adapter.hasFocus(false);
                     }
                 }
-                duration = TRANSLATION_TIME_DEFAULT;
+                duration = 0;
                 oldPosition = 14;
                 break;
         }
@@ -501,5 +502,6 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         }
 
     }
+
 
 }
