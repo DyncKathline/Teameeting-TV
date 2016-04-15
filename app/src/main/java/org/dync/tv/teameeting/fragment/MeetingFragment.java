@@ -22,7 +22,7 @@ import com.orhanobut.logger.Logger;
 import org.anyrtc.AnyrtcMeet;
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
-import org.dync.tv.teameeting.adapter.roomListAdapter;
+import org.dync.tv.teameeting.adapter.RoomListAdapter;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 import org.dync.tv.teameeting.structs.EventType;
 
@@ -110,8 +110,20 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
         initData();
     }
 
+    @Override
     public void requestFocus() {
         button1.requestFocus();
+//        setIsFocus(true);
+        goneLayout(false);
+    }
+
+    @Override
+    public void goneLayout(boolean gone) {
+        if (gone) {
+            llayoutMeeting.setVisibility(View.GONE);
+        } else {
+            llayoutMeeting.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initData() {

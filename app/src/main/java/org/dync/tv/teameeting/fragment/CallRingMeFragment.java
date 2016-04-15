@@ -25,8 +25,8 @@ import de.greenrobot.event.EventBus;
  * A simple {@link Fragment} subclass.
  */
 public class CallRingMeFragment extends BaseFragment implements View.OnFocusChangeListener, View.OnClickListener {
-    @Bind(R.id.llayout_call_ring)
-    public LinearLayout llayoutCallRing;//layout_call_ring.xml
+    @Bind(R.id.llayout_call_ring_me)
+    public LinearLayout llayoutCallRingMe;//layout_call_ring.xml
     @Bind(R.id.LoadingHalo1)
     public ImageView LoadingHalo1;
     @Bind(R.id.LoadingHalo2)
@@ -38,7 +38,7 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     @Bind(R.id.btn_accept)
     public Button btnAccept;
     @Bind(R.id.btn_hungUp)
-    public Button callHungUp;
+    public Button btnCallHungUp;
 
     private MediaPlayer mediaPlayer;
     private boolean isStartAnim = false;//是否关闭动画
@@ -97,7 +97,7 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
 
     private void initListener() {
         btnAccept.setOnClickListener(this);
-        callHungUp.setOnClickListener(this);
+        btnCallHungUp.setOnClickListener(this);
     }
 
     public void startAnim() {
@@ -109,6 +109,22 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     public void stopAnim() {
         isStartAnim = false;
         handler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void requestFocus(){
+        btnAccept.requestFocus();
+//        setIsFocus(true);
+        goneLayout(false);
+    }
+
+    @Override
+    public void goneLayout(boolean gone) {
+        if (gone){
+            llayoutCallRingMe.setVisibility(View.GONE);
+        }else {
+            llayoutCallRingMe.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -136,10 +152,10 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     public void onFocusChange(View v, boolean hasFocus) {
         switch (v.getId()) {
             case R.id.btn_accept:
-
+                Log.e("TAG","接听");
                 break;
             case R.id.btn_hungUp:
-
+                Log.e("TAG","挂断");
                 break;
         }
     }

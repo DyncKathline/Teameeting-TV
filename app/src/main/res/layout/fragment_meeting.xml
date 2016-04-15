@@ -332,6 +332,7 @@
                 android:layout_gravity="center_horizontal"
                 android:divider="@null"
                 android:listSelector="@color/transparent"
+                android:nextFocusRight="@+id/listView"
                 android:nextFocusLeft="@+id/button3"
                 android:scrollbars="none" />
 
