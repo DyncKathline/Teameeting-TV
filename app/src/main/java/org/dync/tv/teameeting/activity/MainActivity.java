@@ -15,8 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
-
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
@@ -50,9 +48,10 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
     public boolean isLocaVideoFlag = true;
     public boolean isLocaAudioFlag = true;
+    public boolean isSwitchRoom = false;  //是否是从一个房间切换到另外一个房间
 
     @Bind(R.id.llayout_phone)//展示当前会议id的父控件
-    LinearLayout llayoutPhone;
+            LinearLayout llayoutPhone;
     @Bind(R.id.tv_phone_text)
     TextView tvPhoneText;
     @Bind(R.id.llayout_control)
@@ -77,7 +76,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     @Bind(R.id.iv_remoteview3)
     ImageView ivRemoteView3;
 
-    boolean isExist = false;
+    boolean isExist = false;  // 已经在会议中，别人入会 挂断是否显示隐藏全部
 
     /**
      * 有人进会回调该方法;
@@ -88,9 +87,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     protected void onRequesageMsg(ReqSndMsgEntity reqSndMsg) {
         if (mDebug)
             Log.e(TAG, "onRequesageMsg: " + reqSndMsg.toString());
+        meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
         if (MeetType.MEET_NO_EXIST == meetType) {
             Log.e("TAG", "没有人入会议");
-            meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
             switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
             goneLayout(true);
             isExist = false;
@@ -106,7 +105,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 //有人进入其他会议
                 Log.e("TAG", "有人进入其他会议");
                 isExist = true;
-                meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
+
                 switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
                 goneLayout(true);
                 mCallRingMeFragment.setPhoneText(meetingListEntity.getMeetingid());
@@ -179,8 +178,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             @Override
             public void onClickCall(String phone) {
                 Log.e(TAG, "onClickCall: ----呼叫");
-                // 拨号上网.
-                enterMeeting(phone);
+                // 拨号上网.(phone);
                 sendPostCall(false);
                 hideAllContent();
                 goneLayout(false);
@@ -194,13 +192,15 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         mCallRingFragment.setOnCallRingListener(new CallRingFragment.CallRingListener() {
             @Override
             public void onClickHungUp() {
-                if (meetType == MeetType.MEET_EXIST && !isExist) {
-                    hideAllContent();
-                } else {
-                    switchContent(mCallRingFragment, mMeetingFragment, TAG_FRAG_MEETING);
-                    goneLayout(true);
-                    mMeetingFragment.requestFocus();
-                }
+//                if (meetType == MeetType.MEET_EXIST && !isExist) {
+//                    hideAllContent();
+//                } else if (isSwitchRoom) {
+//                    hideAllContent();
+//                } else {
+//                    switchContent(mCallRingFragment, mMeetingFragment, TAG_FRAG_MEETING);
+//                    goneLayout(true);
+//                    mMeetingFragment.requestFocus();
+//                }
 
             }
 
@@ -214,10 +214,14 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             public void onClickHungUp() {
                 if (meetType == MeetType.MEET_EXIST && !isExist) {
                     hideAllContent();
+                } else if (isSwitchRoom) {
+                    hideAllContent();
+                    requestFocus();
                 } else {
                     switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING);
                     goneLayout(true);
                     mMeetingFragment.requestFocus();
+                    isSwitchRoom = false;
                 }
 
             }
@@ -225,8 +229,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             @Override
             public void onClickAccept(String phone) {
                 hideAllContent();
-                int position = mTVAPP.getMeetingIdPosition(meetingListEntity.getMeetingid());
-                joinMeet(meetingListEntity, position);
+                joinAnyrtcMeet(meetingListEntity);
                 goneLayout(false);
                 tvPhoneText.setText(phone);
                 btnAudioSoundon.requestFocus();
@@ -273,12 +276,13 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     private void joinAnyrtcMeet(MeetingListEntity meetingListEntity) {
         if (meetingListEntity != null) {
             Log.e(TAG, "joinAnyrtcMeet: ");
-            boolean join;
+            boolean join = false;
             if (meetType == MeetType.MEET_NO_EXIST) {
                 //第一次入会
                 join = mAnyrtcMeet.Join(meetingListEntity.getAnyrtcid());
             } else {
                 //切换会议;
+                isSwitchRoom = true;
                 join = mAnyrtcMeet.SwitchRoom(meetingListEntity.getAnyrtcid());
             }
 
@@ -302,7 +306,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             if (mDebug)
                 Log.e(TAG, "destoryJoinMeet: " + tag);
             meetType = MeetType.MEET_EXIST;
-
+            isSwitchRoom = false;
         } else {
 
         }
@@ -352,7 +356,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
      * @param position 给要显示的Fragment设置tag
      */
     public void switchContent(BaseFragment from, BaseFragment to, int position) {
-        Log.e(TAG,"switchContent");
+        Log.e(TAG, "switchContent");
         if (from != to) {
             FragmentTransaction ft = fm.beginTransaction();
             if (!to.isAdded()) {    // 先判断是否被add过
@@ -396,7 +400,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             tags[2] = "2";
             ft.add(R.id.flayout_content, mCallRingFragment, tags[TAG_FRAG_CALL]).hide(mCallRingFragment);
             ft.commit();
-        }else {
+        } else {
             mMeetingFragment = (MeetingFragment) fm.findFragmentByTag(tags[TAG_FRAG_MEETING]);
             mCallRingFragment = (CallRingFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL_ME]);
             mCallRingMeFragment = (CallRingMeFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL]);
@@ -462,7 +466,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 break;
             case 1:
                 if (position < 0) {
-                    // 当前列表不存在 插入列表中
                     mNetWork.insertUserMeetingRoom(mTVAPP.getAuthorization(), meetinId);
                 } else {
                     //当前列表中存在 直接进入会议;
@@ -496,15 +499,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
      * 插入会议成功
      */
     private void insertMeetingSuccess() {
-        mNetWork.updateUserMeetingJointime(mTVAPP.getAuthorization(), mTVAPP.getmMeetingListEntityInfo().getMeetingid());
-        joinMeet(mTVAPP.getMeetingLists().get(0), 0);
-        sendPostCall(false);
-        hideAllContent();
-        goneLayout(false);
-        btnAudioSoundon.requestFocus();
-        //adapter.notifyDataSetChanged();
-        //enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
 
+        //adapter.notifyDataSetChanged();
+        enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
     }
 
     private void notifyDataSetChanged() {
@@ -536,8 +533,11 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     ivRemoteView3.setFocusable(true);
                     break;
             }
+        } else if (peopleNum == 0 && isSwitchRoom) {
+            // 切换房间
+
         } else {
-            //当人数为0的时候显示
+            // 当人数为0的时候显示
             switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
             goneLayout(true);
             mMeetingFragment.requestFocus();
@@ -677,7 +677,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             case MSG_UP_DATE_USER_MEETING_JOIN_TIME_SUCCESS:
                 if (mDebug)
                     Log.e(TAG, "onEventMainThread: --更新时间成功");
-                notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
                 break;
         }
     }
