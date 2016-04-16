@@ -97,6 +97,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             mCallRingMeFragment.requestFocus();
 
         } else if (MeetType.MEET_EXIST == meetType) {
+            isSwitchRoom = true;
             if (joinMeetistEntity != null && meetingListEntity != null && joinMeetistEntity.getMeetingid().equals(meetingListEntity.getMeetingid())) {
                 Log.e("TAG", "MeetType.MEET_EXIST == meetType");
                 isExist = false;
@@ -105,7 +106,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 //有人进入其他会议
                 Log.e("TAG", "有人进入其他会议");
                 isExist = true;
-
                 switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
                 goneLayout(true);
                 mCallRingMeFragment.setPhoneText(meetingListEntity.getMeetingid());
@@ -223,7 +223,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     mMeetingFragment.requestFocus();
                     isSwitchRoom = false;
                 }
-
             }
 
             @Override
