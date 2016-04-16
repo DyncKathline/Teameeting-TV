@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.dync.tv.teameeting.R;
+import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
 
 import java.util.List;
@@ -27,9 +28,15 @@ public class RoomListAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    public void hasFocus(boolean hasFocus){
+    public void hasFocus(boolean hasFocus) {
         this.hasFocus = hasFocus;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        meetingLists = TVAPP.getmTVAPP().getMeetingLists();
+        super.notifyDataSetChanged();
     }
 
     @Override
