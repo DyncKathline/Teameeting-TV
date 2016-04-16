@@ -123,6 +123,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
             llayoutMeeting.setVisibility(View.GONE);
         } else {
             llayoutMeeting.setVisibility(View.VISIBLE);
+            adapter.notifyDataSetChanged();
         }
     }
 

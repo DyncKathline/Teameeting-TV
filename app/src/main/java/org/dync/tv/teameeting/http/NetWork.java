@@ -43,6 +43,7 @@ public class NetWork {
                 if (mDebug) {
                     Logger.e(responseString);
                 }
+
                 if (statusCode == 200) {
                     msg.what = EventType.MSG_GET_ROOM_LIST_SUCCESS.ordinal();
                     MeetingList meetingList = gson.fromJson(responseString, MeetingList.class);
