@@ -194,10 +194,12 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 ibtnHeight = imageButton.getHeight();
                 Log.i("TAG", "ibtnWidth= " + ibtnWidth + "; ibtnHeight= " + ibtnHeight);
                 RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                int left = (buttonWidth - ibtnWidth) / 2;
-                int top = (buttonHeight - ibtnHeight) / 2;
-                int right = ibtnWidth;
-                int bottom = ibtnHeight;
+                lp.width = buttonHeight;
+                lp.height = buttonHeight;
+                int left = (buttonWidth - buttonHeight) / 2;
+                int top = 0;
+                int right = 0;
+                int bottom = 0;
                 lp.setMargins(left, top, right, bottom);
                 imageButton.setLayoutParams(lp);
             }
