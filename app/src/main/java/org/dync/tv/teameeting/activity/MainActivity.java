@@ -14,6 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
+
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
@@ -213,8 +215,12 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
             @Override
             public void onClickAccept() {
+                if (mDebug) {
+                    Logger.e("onClickAccept:meetingListEntity-- " + meetingListEntity.toString());
+                }
                 hideAllContent();
-                joinAnyrtcMeet(meetingListEntity);
+                int position = mTVAPP.getMeetingIdPosition(meetingListEntity.getMeetingid());
+                joinMeet(meetingListEntity, position);
                 goneLayout(false);
                 btnAudioSoundon.requestFocus();
             }
@@ -382,7 +388,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             tags[2] = "2";
             ft.add(R.id.flayout_content, mCallRingFragment, tags[TAG_FRAG_CALL]).hide(mCallRingFragment);
             ft.commit();
-        }else {
+        } else {
             mMeetingFragment = (MeetingFragment) fm.findFragmentByTag(tags[TAG_FRAG_MEETING]);
             mCallRingFragment = (CallRingFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL_ME]);
             mCallRingMeFragment = (CallRingMeFragment) fm.findFragmentByTag(tags[TAG_FRAG_CALL]);
@@ -448,7 +454,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 break;
             case 1:
                 if (position < 0) {
+                    // 当前列表不存在 插入列表中
                     mNetWork.insertUserMeetingRoom(mTVAPP.getAuthorization(), meetinId);
+
                 } else {
                     //当前列表中存在 直接进入会议;
 
@@ -472,7 +480,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
      * @param meetingListEntity
      */
     public void joinMeet(MeetingListEntity meetingListEntity, int position) {
-        mTVAPP.addMeetingHeardEntityPosition(position); //提升列表到头部
+        mTVAPP.addMeetingHeardEntityPosition(position); //更新列表到头部
         joinAnyrtcMeet(meetingListEntity); //进入指定的会议;
         notifyDataSetChanged();  //通知适配器更新数据
     }
@@ -481,9 +489,15 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
      * 插入会议成功
      */
     private void insertMeetingSuccess() {
-
+        mNetWork.updateUserMeetingJointime(mTVAPP.getAuthorization(), mTVAPP.getmMeetingListEntityInfo().getMeetingid());
+        joinMeet(mTVAPP.getMeetingLists().get(0), 0);
+        sendPostCall(false);
+        hideAllContent();
+        goneLayout(false);
+        btnAudioSoundon.requestFocus();
         //adapter.notifyDataSetChanged();
-        enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
+        //enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
+
     }
 
     private void notifyDataSetChanged() {
@@ -656,7 +670,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             case MSG_UP_DATE_USER_MEETING_JOIN_TIME_SUCCESS:
                 if (mDebug)
                     Log.e(TAG, "onEventMainThread: --更新时间成功");
-                //adapter.notifyDataSetChanged();
+                notifyDataSetChanged();
                 break;
         }
     }

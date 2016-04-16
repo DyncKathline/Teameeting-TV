@@ -246,7 +246,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         int statusHeight = ScreenUtils.getStatusHeight(context);
         int screenHeight = ScreenUtils.getScreenHeight(context);
 
-        mScreenHeight = screenHeight - statusHeight;
+        mScreenHeight = screenHeight;
         Log.e(TAG, screenHeight + "AnyRTCViewsTV:----statusHeight " + statusHeight + "---mScreenWidth----" + mScreenWidth);
 
         mVideoView.setOnTouchListener(this);
@@ -649,9 +649,11 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
                 BubbleSortSubView(remoteRender);
             }
             remoteRender.close();
+            mVideoView.removeView(remoteRender.mAudioView);
             mVideoView.removeView(remoteRender.mLayout);
             mRemoteRenders.remove(peerId);
             remoteRender = null;
+
             peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
     }
@@ -688,7 +690,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         if (mLocalRender != null) {
             mLocalRender.mVideoTrack = null;
             mLocalRender.mRenderer = null;
-
+            mVideoView.removeView(mVideoView);
             mVideoView.removeView(mLocalRender.mLayout);
             mLocalRender = null;
         }
