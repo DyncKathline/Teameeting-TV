@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.dync.tv.teameeting.R;
@@ -48,6 +49,10 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     public boolean isLocaVideoFlag = true;
     public boolean isLocaAudioFlag = true;
 
+    @Bind(R.id.llayout_phone)//展示当前会议id的父控件
+    LinearLayout llayoutPhone;
+    @Bind(R.id.tv_phone_text)
+    TextView tvPhoneText;
     @Bind(R.id.llayout_control)
     RoomControls lLayoutControl;
     @Bind(R.id.btn_audio_soundon)
@@ -87,6 +92,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
             goneLayout(true);
             isExist = false;
+            mCallRingMeFragment.setPhoneText(meetingListEntity.getMeetingid());
             mCallRingMeFragment.requestFocus();
 
         } else if (MeetType.MEET_EXIST == meetType) {
@@ -101,6 +107,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
                 switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
                 goneLayout(true);
+                mCallRingMeFragment.setPhoneText(meetingListEntity.getMeetingid());
                 mCallRingMeFragment.requestFocus();
             }
         }
@@ -119,10 +126,12 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         if (gone) {
             lLayoutControl.hide();
             lLayoutControl.setVisibility(View.GONE);
+            llayoutPhone.setVisibility(View.GONE);
             llayoutFocusVideView.setVisibility(View.GONE);
         } else {
             lLayoutControl.show();
             lLayoutControl.setVisibility(View.VISIBLE);
+            llayoutPhone.setVisibility(View.VISIBLE);
             llayoutFocusVideView.setVisibility(View.VISIBLE);
         }
     }
@@ -168,8 +177,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             @Override
             public void onClickCall(String phone) {
                 Log.e(TAG, "onClickCall: ----呼叫");
-                // 拨号上网.
-                enterMeeting(phone);
+                // 拨号上网.(phone);
                 sendPostCall(false);
                 hideAllContent();
                 goneLayout(false);
@@ -212,10 +220,11 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             }
 
             @Override
-            public void onClickAccept() {
+            public void onClickAccept(String phone) {
                 hideAllContent();
                 joinAnyrtcMeet(meetingListEntity);
                 goneLayout(false);
+                tvPhoneText.setText(phone);
                 btnAudioSoundon.requestFocus();
             }
 
@@ -339,6 +348,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
      * @param position 给要显示的Fragment设置tag
      */
     public void switchContent(BaseFragment from, BaseFragment to, int position) {
+        Log.e(TAG,"switchContent");
         if (from != to) {
             FragmentTransaction ft = fm.beginTransaction();
             if (!to.isAdded()) {    // 先判断是否被add过

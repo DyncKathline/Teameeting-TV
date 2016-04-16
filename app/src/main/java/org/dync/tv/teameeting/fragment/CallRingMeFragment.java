@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 
@@ -35,6 +36,8 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     public ImageView LoadingHalo3;
     @Bind(R.id.LoadingHalo4)
     public ImageView LoadingHalo4;
+    @Bind(R.id.tv_meeting_call)
+    public TextView tvMeetingCall;
     @Bind(R.id.btn_accept)
     public Button btnAccept;
     @Bind(R.id.btn_hungUp)
@@ -127,6 +130,10 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
         }
     }
 
+    public void setPhoneText(String phoneText){
+        tvMeetingCall.setText(phoneText);
+    }
+
     @Override
     public void onClick(View v) {
         Message msg = Message.obtain();
@@ -135,7 +142,8 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
                 if (mCallRingMeListener != null) {
                     msg.what = EventType.MSG_CALL_ME_STOP.ordinal();//分别发送到CallRingFragment、MeetingFragment
                     EventBus.getDefault().post(msg);
-                    mCallRingMeListener.onClickAccept();
+                    String phone = tvMeetingCall.getText().toString();
+                    mCallRingMeListener.onClickAccept(phone);
                 }
                 break;
             case R.id.btn_hungUp:
@@ -163,7 +171,7 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     public interface CallRingMeListener {
         void onClickHungUp();
 
-        void onClickAccept();
+        void onClickAccept(String phone);
     }
 
     private CallRingMeListener mCallRingMeListener;
