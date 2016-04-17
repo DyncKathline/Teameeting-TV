@@ -1,18 +1,15 @@
 package org.dync.tv.teameeting.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
-
 import org.dync.tv.teameeting.R;
-import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
+import org.dync.tv.teameeting.utils.StringHelper;
 
 import java.util.List;
 
@@ -34,7 +31,6 @@ public class RoomListAdapter extends BaseAdapter {
         this.hasFocus = hasFocus;
         notifyDataSetChanged();
     }
-
 
     @Override
     public int getCount() {
@@ -60,6 +56,7 @@ public class RoomListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_room_list, null);
             holderView.txtRoomNum = (TextView) convertView.findViewById(R.id.txt_room_num);
             holderView.txtRoomName = (TextView) convertView.findViewById(R.id.txt_room_name);
+            holderView.txtTimestamp = (TextView) convertView.findViewById(R.id.txt_timestamp);
             convertView.setTag(holderView);
         } else {
             holderView = (HolderView) convertView.getTag();
@@ -67,6 +64,8 @@ public class RoomListAdapter extends BaseAdapter {
 
         holderView.txtRoomNum.setText(meetingListEntity.getMeetingid());
         holderView.txtRoomName.setText(meetingListEntity.getMeetname());
+        String string = StringHelper.format(meetingListEntity.getJointime(), context.getResources());
+        holderView.txtTimestamp.setText(string);
         if (hasFocus) {
             convertView.setBackgroundResource(R.drawable.item_selector);
 //            Log.e("BaseAdapter", "getView得到焦点====" + position);
@@ -81,5 +80,6 @@ public class RoomListAdapter extends BaseAdapter {
     private class HolderView {
         public TextView txtRoomNum;
         public TextView txtRoomName;
+        public TextView txtTimestamp;
     }
 }

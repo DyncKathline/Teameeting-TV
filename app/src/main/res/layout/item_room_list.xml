@@ -53,7 +53,7 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/tv_timestamp"
+                android:id="@+id/txt_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:shadowRadius="2.0"
