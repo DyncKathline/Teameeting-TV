@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RippleBackground">
+        <!--圆圈的填充颜色-->
         <attr name="rb_color" format="color" />
-        <attr name="rb_strokeWidth" format="dimension"/>
-        <attr name="rb_radius" format="dimension"/>
-        <attr name="rb_duration" format="integer"/>
-        <attr name="rb_rippleAmount" format="integer"/>
-        <attr name="rb_scale" format="float"/>
+        <!--画圆圈线的画笔宽度-->
+        <attr name="rb_strokeWidth" format="dimension" />
+        <!--圆圈的半径-->
+        <attr name="rb_radius" format="dimension" />
+        <!--启动一次动画的时间-->
+        <attr name="rb_duration" format="integer" />
+        <!--圆圈的数量-->
+        <attr name="rb_rippleAmount" format="integer" />
+        <!--圆圈缩放倍数-->
+        <attr name="rb_scale" format="float" />
+        <!--画圆圈的类型-->
         <attr name="rb_type" format="enum">
-            <enum name="fillRipple" value="0"/>
-            <enum name="strokeRipple" value="1"/>
+            <enum name="fillRipple" value="0" />
+            <enum name="strokeRipple" value="1" />
         </attr>
     </declare-styleable>
 </resources>
