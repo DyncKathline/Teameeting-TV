@@ -232,6 +232,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     mMeetingFragment.requestFocus();
                     isSwitchRoom = false;
                 }
+                notifyDataSetChanged();
             }
 
             @Override
