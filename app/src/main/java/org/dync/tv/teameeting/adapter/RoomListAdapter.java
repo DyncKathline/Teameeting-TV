@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
+
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.TVAPP;
 import org.dync.tv.teameeting.bean.MeetingListEntity;
@@ -33,11 +35,6 @@ public class RoomListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-        meetingLists = TVAPP.getmTVAPP().getMeetingLists();
-        super.notifyDataSetChanged();
-    }
 
     @Override
     public int getCount() {
@@ -63,14 +60,13 @@ public class RoomListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_room_list, null);
             holderView.txtRoomNum = (TextView) convertView.findViewById(R.id.txt_room_num);
             holderView.txtRoomName = (TextView) convertView.findViewById(R.id.txt_room_name);
-            holderView.txtRoomNum.setText(meetingListEntity.getMeetingid());
-            holderView.txtRoomName.setText(meetingListEntity.getMeetname());
-
             convertView.setTag(holderView);
         } else {
             holderView = (HolderView) convertView.getTag();
         }
 
+        holderView.txtRoomNum.setText(meetingListEntity.getMeetingid());
+        holderView.txtRoomName.setText(meetingListEntity.getMeetname());
         if (hasFocus) {
             convertView.setBackgroundResource(R.drawable.item_selector);
 //            Log.e("BaseAdapter", "getView得到焦点====" + position);

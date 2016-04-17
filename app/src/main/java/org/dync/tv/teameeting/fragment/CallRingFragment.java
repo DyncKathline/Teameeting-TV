@@ -198,6 +198,7 @@ public class CallRingFragment extends BaseFragment implements View.OnFocusChange
                 callRingStart();
                 break;
             case MSG_CALL_STOP:
+
                 stopAnim();
                 callRingStop();
                 break;

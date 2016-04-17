@@ -67,14 +67,13 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@drawable/shape_corners_bg"
             android:focusable="true"
             android:nextFocusRight="@+id/button1">
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/shape_corners_bg"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -117,7 +116,8 @@
                 android:id="@+id/scaleImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/shape_image_border" />
+                android:background="@drawable/shape_image_border"
+                android:scaleType="fitCenter" />
 
         </RelativeLayout>
 
@@ -134,11 +134,11 @@
                 android:id="@+id/edt_meeting"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_marginLeft="15dp"
-                android:focusable="false"
+                android:gravity="center"
                 android:singleLine="true"
-                android:text="4008083052"
+                android:text="4008670295"
                 android:textColor="@color/white"
+                android:textCursorDrawable="@drawable/color_cursor"
                 android:textSize="@dimen/textsize" />
 
             <RelativeLayout
@@ -274,6 +274,7 @@
                             android:nextFocusLeft="@+id/rlayout_image"
                             android:nextFocusRight="@+id/button11"
                             android:nextFocusUp="@+id/button7"
+                            android:textSize="25sp"
                             android:text="清空" />
 
                         <Button
@@ -288,6 +289,8 @@
                         <Button
                             android:id="@+id/button12"
                             style="@style/ButtonStyle"
+                            android:layerType="hardware"
+                            android:textSize="25sp"
                             android:nextFocusDown="@+id/button13"
                             android:nextFocusLeft="@+id/button11"
                             android:nextFocusRight="@+id/listView"

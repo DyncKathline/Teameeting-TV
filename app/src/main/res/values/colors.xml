@@ -8,6 +8,8 @@
     <color name="red">#CC0000</color>
     <color name="green">#00ED3D</color>
     <color name="greenDark">#005900</color>
-
+    <color name="calllog_nickname_normal_color">#7fffffff</color>
+    <color name="txt_shadow_color_40">#66000000</color>
+    <color name="backgroud_fragment">#55FFFFFF</color>
     <color name="rippelColor">#0099CC</color>
 </resources>

@@ -104,7 +104,6 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
 
     @Override
     protected void init() {
-
         drawBeforeGetSize();
         initListener();
         initData();
@@ -129,7 +128,11 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
 
     private void initData() {
         meetingTextView.setText(TVAPP.getmTVAPP().getMeetingListEntity().getMeetingid());
-
+        MeetingListEntity meetingListEntity = mTVAPP.getMeetingListEntity();
+        String editMeetingId = meetingListEntity.getMeetingid();
+        edtMeetNum.setText(editMeetingId);
+        phone = editMeetingId;
+        edtMeetNum.setSelection(phone.length());
         mMeetingLists = TVAPP.getmTVAPP().getMeetingLists();
 //        mMeetingLists = new ArrayList<>();
 //        MeetingListEntity meetingListEntity = new MeetingListEntity();
@@ -291,8 +294,8 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                 break;
             case R.id.button13:
                 if (mMeetingListener != null) {
-                    Log.e(TAG, "onClick: ");
-                    mMeetingListener.onClickCall(phone, false);
+                    Log.e(TAG, "onClick: " + edtMeetNum.getText().toString());
+                    mMeetingListener.onClickCall(edtMeetNum.getText().toString(), false);
                     //Message msg = Message.obtain();
                     //msg.what = EventType.MSG_CALL_START.ordinal();//分别发送到CallRingFragment、MeetingFragment
                     //EventBus.getDefault().post(msg);
@@ -500,11 +503,23 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
                     Log.e(TAG, "onEventMainThread: 暂停");
                 break;
             case MSG_NOTIFY_DATA_CHANGE:
+                if (mDebug) {
+                    Log.e(TAG, "onEventMainThread: 列表数据改变" );
+                }
                 //列表数据改变
                 mMeetingLists = mTVAPP.getMeetingLists();
                 adapter.notifyDataSetChanged();
+                break;
             case MSG_CALL_STOP:
+                if (mDebug) {
+                    Log.e(TAG, "onEventMainThread: ");
+                }
                 requestFocus();
+                break;
+            default:
+                if (mDebug){
+                    Log.e(TAG, "onEventMainThread: " );
+                }
                 break;
         }
 
