@@ -2,7 +2,8 @@ package org.dync.tv.teameeting.structs;
 
 
 public enum EventType {
-    MSG_RESPONS_ESTR_NULl,
+    MSG_RESPONS_ESTR_NULl,//这是EventBus默认会发送一个以零开始的消息
+    MSG_RESPONS_ESTR_NULL,
     MSG_GET_MEETING_INFO_SUCCESS,
     MSG_GET_MEETING_INFO_FAILED,
     MSG_GET_ROOM_LIST_SUCCESS,

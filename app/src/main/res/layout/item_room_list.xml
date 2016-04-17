@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/item_selector"
+    android:layout_height="wrap_content"
+    android:background="#000000"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical">
 
         <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -22,19 +26,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:shadowColor="@color/txt_shadow_color_40"
+                android:shadowRadius="2.0"
                 android:text="房间名称"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/incoming_call" />
+                android:textColor="@color/calllog_nickname_normal_color"
+                android:textSize="28sp" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -43,9 +47,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="房间号码"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:text="840006500"
+                android:textColor="@color/calllog_nickname_normal_color"
+
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowRadius="2.0"
+                android:text="14-04-18"
+                android:textColor="@color/calllog_nickname_normal_color"
+
+                android:textSize="20sp" />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
