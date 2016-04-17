@@ -98,9 +98,6 @@ public abstract class BaseMeetingActivity extends BaseActivity implements MeetEv
     AnyRTCViewsTV.onPeopleChangeListener peopleChangeListener = new AnyRTCViewsTV.onPeopleChangeListener() {
         @Override
         public void OnPeopleNumChange(int peopleNum) {
-            if (mDebug) {
-                Log.e(TAG, "OnPeopleNumChange: -----" + peopleNum);
-            }
             onPeopleNumChange(peopleNum);
         }
     };

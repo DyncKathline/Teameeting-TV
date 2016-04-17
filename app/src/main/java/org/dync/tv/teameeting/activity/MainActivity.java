@@ -175,14 +175,24 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         ivRemoteView3.setOnFocusChangeListener(this);
 
         mMeetingFragment.setOnMeetingListener(new MeetingFragment.MeetingListener() {
+
             @Override
-            public void onClickCall(String phone) {
+            public void onClickCall(String phone, boolean isCallorItem) {
                 Log.e(TAG, "onClickCall: ----呼叫");
+
+                enterMeeting(phone);
+
+                if (isCallorItem) {
+                   /* sendPostCall(false);
+                    hideAllContent();
+                    goneLayout(false);
+                    btnAudioSoundon.requestFocus();*/
+                } else {
+                    //enterMeeting(phone);
+
+                }
                 // 拨号上网.(phone);
-                sendPostCall(false);
-                hideAllContent();
-                goneLayout(false);
-                btnAudioSoundon.requestFocus();
+
             }
         });
 
@@ -470,6 +480,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     //当前列表中存在 直接进入会议;
 
                     joinMeet(meetingListEntityInfo, position);
+
                 }
                 break;
             case 2://private
@@ -477,6 +488,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     Toast.makeText(mContext, R.string.str_meeting_privated, Toast.LENGTH_SHORT).show();
                 } else {
                     joinMeet(meetingListEntityInfo, position);
+
                 }
                 break;
         }
@@ -492,6 +504,12 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         mTVAPP.addMeetingHeardEntityPosition(position); //更新列表到头部
         joinAnyrtcMeet(meetingListEntity); //进入指定的会议;
         notifyDataSetChanged();  //通知适配器更新数据
+
+        sendPostCall(false);
+        hideAllContent();
+        goneLayout(false);
+        tvPhoneText.setText(meetingListEntity.getMeetingid());
+        btnAudioSoundon.requestFocus();
     }
 
     /**
@@ -501,6 +519,9 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
         //adapter.notifyDataSetChanged();
         enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
+        joinMeet(mTVAPP.getMeetingLists().get(0), 0);
+
+
     }
 
     private void notifyDataSetChanged() {

@@ -150,7 +150,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
             //单机列表进入会议;
             if (mMeetingListener != null) {
                 Log.e(TAG, "onClick: ");
-                mMeetingListener.onClickCall(meeting.getMeetingid());
+                mMeetingListener.onClickCall(meeting.getMeetingid(), true);
             }
 
         }
@@ -292,7 +292,7 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
             case R.id.button13:
                 if (mMeetingListener != null) {
                     Log.e(TAG, "onClick: ");
-                    mMeetingListener.onClickCall(phone);
+                    mMeetingListener.onClickCall(phone, false);
                     //Message msg = Message.obtain();
                     //msg.what = EventType.MSG_CALL_START.ordinal();//分别发送到CallRingFragment、MeetingFragment
                     //EventBus.getDefault().post(msg);
@@ -306,7 +306,11 @@ public class MeetingFragment extends BaseFragment implements View.OnFocusChangeL
     }
 
     public interface MeetingListener {
-        void onClickCall(String phone);
+        /**
+         * @param phone
+         * @param isCallorItem flase:单击呼叫  true：单击Item
+         */
+        void onClickCall(String phone, boolean isCallorItem);
     }
 
     private MeetingListener mMeetingListener;
