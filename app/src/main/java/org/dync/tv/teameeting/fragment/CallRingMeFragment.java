@@ -18,6 +18,7 @@ import com.orhanobut.logger.Logger;
 
 import org.dync.tv.teameeting.R;
 import org.dync.tv.teameeting.structs.EventType;
+import org.dync.tv.teameeting.utils.RippleBackground;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -28,14 +29,8 @@ import de.greenrobot.event.EventBus;
 public class CallRingMeFragment extends BaseFragment implements View.OnFocusChangeListener, View.OnClickListener {
     @Bind(R.id.llayout_call_ring_me)
     public LinearLayout llayoutCallRingMe;//layout_call_ring.xml
-    @Bind(R.id.LoadingHalo1)
-    public ImageView LoadingHalo1;
-    @Bind(R.id.LoadingHalo2)
-    public ImageView LoadingHalo2;
-    @Bind(R.id.LoadingHalo3)
-    public ImageView LoadingHalo3;
-    @Bind(R.id.LoadingHalo4)
-    public ImageView LoadingHalo4;
+    @Bind(R.id.content)
+    RippleBackground rippleBackground;
     @Bind(R.id.tv_meeting_call)
     public TextView tvMeetingCall;
     @Bind(R.id.btn_accept)
@@ -44,44 +39,6 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     public Button btnCallHungUp;
 
     private MediaPlayer mediaPlayer;
-    private boolean isStartAnim = false;//是否关闭动画
-    public Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    animset(LoadingHalo2);
-                    handler.sendEmptyMessageDelayed(2, 500);
-                    break;
-                case 2:
-                    animset(LoadingHalo3);
-                    handler.sendEmptyMessageDelayed(3, 500);
-                    break;
-                case 3:
-                    animset(LoadingHalo4);
-                    handler.sendEmptyMessageDelayed(4, 500);
-                    break;
-                case 4:
-                    animset(LoadingHalo1);
-                    handler.sendEmptyMessageDelayed(1, 500);
-                    break;
-            }
-        }
-    };
-
-    public void animset(View view) {
-        if (isStartAnim) {
-            //Log.e("TAG", "动画开启中。。。。。");
-            ObjectAnimator animator1 = ObjectAnimator.ofFloat(view, "scaleX", 0.0f, 1.0f);
-            ObjectAnimator animator2 = ObjectAnimator.ofFloat(view, "scaleY", 0.0f, 1.0f);
-            ObjectAnimator animator3 = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0f);
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.setDuration(2000);
-            animatorSet.playTogether(animator1, animator2, animator3);
-            animatorSet.start();
-        }
-    }
 
     public CallRingMeFragment() {
         // Required empty public constructor
@@ -104,18 +61,17 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     }
 
     public void startAnim() {
-        isStartAnim = true;
-        animset(LoadingHalo1);
-        handler.sendEmptyMessageDelayed(1, 0);
+        rippleBackground.startRippleAnimation();
+        callRingStart();
     }
 
     public void stopAnim() {
-        isStartAnim = false;
-        handler.removeCallbacksAndMessages(null);
+        rippleBackground.stopRippleAnimation();
+        callRingStop();
     }
 
     @Override
-    public void requestFocus(){
+    public void requestFocus() {
         btnAccept.requestFocus();
 //        setIsFocus(true);
         goneLayout(false);
@@ -123,14 +79,16 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
 
     @Override
     public void goneLayout(boolean gone) {
-        if (gone){
+        if (gone) {
             llayoutCallRingMe.setVisibility(View.GONE);
-        }else {
+            stopAnim();
+        } else {
             llayoutCallRingMe.setVisibility(View.VISIBLE);
+            startAnim();
         }
     }
 
-    public void setPhoneText(String phoneText){
+    public void setPhoneText(String phoneText) {
         tvMeetingCall.setText(phoneText);
     }
 
@@ -160,10 +118,10 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     public void onFocusChange(View v, boolean hasFocus) {
         switch (v.getId()) {
             case R.id.btn_accept:
-                Log.e("TAG","接听");
+                Log.e("TAG", "接听");
                 break;
             case R.id.btn_hungUp:
-                Log.e("TAG","挂断");
+                Log.e("TAG", "挂断");
                 break;
         }
     }

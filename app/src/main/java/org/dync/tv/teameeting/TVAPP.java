@@ -128,7 +128,7 @@ public class TVAPP extends Application {
     public void setMeetingLists(List<MeetingListEntity> meetingLists) {
         if (meetingLists != null) {
             this.mMeetingLists.clear();
-            this.mMeetingLists = meetingLists;
+            this.mMeetingLists.addAll(meetingLists);
         }
 
     }

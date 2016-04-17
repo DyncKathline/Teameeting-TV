@@ -105,7 +105,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                 //有人进入其他会议
                 Log.e("TAG", "有人进入其他会议");
                 isExist = true;
-
                 switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
                 goneLayout(true);
                 mCallRingMeFragment.setPhoneText(meetingListEntity.getMeetingid());
@@ -175,14 +174,24 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         ivRemoteView3.setOnFocusChangeListener(this);
 
         mMeetingFragment.setOnMeetingListener(new MeetingFragment.MeetingListener() {
+
             @Override
-            public void onClickCall(String phone) {
+            public void onClickCall(String phone, boolean isCallorItem) {
                 Log.e(TAG, "onClickCall: ----呼叫");
+
+                enterMeeting(phone);
+
+                if (isCallorItem) {
+                   /* sendPostCall(false);
+                    hideAllContent();
+                    goneLayout(false);
+                    btnAudioSoundon.requestFocus();*/
+                } else {
+                    //enterMeeting(phone);
+
+                }
                 // 拨号上网.(phone);
-                sendPostCall(false);
-                hideAllContent();
-                goneLayout(false);
-                btnAudioSoundon.requestFocus();
+
             }
         });
 
@@ -223,7 +232,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     mMeetingFragment.requestFocus();
                     isSwitchRoom = false;
                 }
-
             }
 
             @Override
@@ -471,6 +479,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     //当前列表中存在 直接进入会议;
 
                     joinMeet(meetingListEntityInfo, position);
+
                 }
                 break;
             case 2://private
@@ -478,6 +487,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
                     Toast.makeText(mContext, R.string.str_meeting_privated, Toast.LENGTH_SHORT).show();
                 } else {
                     joinMeet(meetingListEntityInfo, position);
+
                 }
                 break;
         }
@@ -490,9 +500,16 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
      * @param meetingListEntity
      */
     public void joinMeet(MeetingListEntity meetingListEntity, int position) {
+        enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
         mTVAPP.addMeetingHeardEntityPosition(position); //更新列表到头部
         joinAnyrtcMeet(meetingListEntity); //进入指定的会议;
         notifyDataSetChanged();  //通知适配器更新数据
+
+        sendPostCall(false);
+        hideAllContent();
+        goneLayout(false);
+        tvPhoneText.setText(meetingListEntity.getMeetingid());
+        btnAudioSoundon.requestFocus();
     }
 
     /**
@@ -501,7 +518,10 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     private void insertMeetingSuccess() {
 
         //adapter.notifyDataSetChanged();
-        enterStartMeeting(mTVAPP.getmMeetingListEntityInfo());
+
+        joinMeet(mTVAPP.getMeetingLists().get(0), 0);
+
+
     }
 
     private void notifyDataSetChanged() {
@@ -535,6 +555,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             }
         } else if (peopleNum == 0 && isSwitchRoom) {
             // 切换房间
+            isSwitchRoom = false;
 
         } else {
             // 当人数为0的时候显示
@@ -649,6 +670,11 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
     public void onEventMainThread(Message msg) {
         switch (EventType.values()[msg.what]) {
             case MSG_RESPONS_ESTR_NULl:
+                if (mDebug) {
+                    Log.e(TAG, "onEventMainThread: 这是谁发的我不知道");
+                }
+                break;
+            case MSG_RESPONS_ESTR_NULL:
                 if (mDebug)
                     Log.e(TAG, "onEventMainThread:请求网络失败 ");
                 break;
@@ -677,7 +703,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             case MSG_UP_DATE_USER_MEETING_JOIN_TIME_SUCCESS:
                 if (mDebug)
                     Log.e(TAG, "onEventMainThread: --更新时间成功");
-                //adapter.notifyDataSetChanged();
+                notifyDataSetChanged();
                 break;
         }
     }

@@ -36,7 +36,7 @@ public class TmTextHttpResponseHandler extends TextHttpResponseHandler {
     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
         // network or server  problem
         Logger.e("onFailure: "+statusCode+"-----responseString" +responseString);
-        msg.what = EventType.MSG_RESPONS_ESTR_NULl.ordinal();
+        msg.what = EventType.MSG_RESPONS_ESTR_NULL.ordinal();
         EventBus.getDefault().post(msg);
     }
 
