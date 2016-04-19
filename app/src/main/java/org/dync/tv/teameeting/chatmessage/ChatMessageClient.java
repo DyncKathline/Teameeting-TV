@@ -75,7 +75,8 @@ public class ChatMessageClient implements JMClientHelper {
         Gson gson = new Gson();
         //这里可以接受到入会。
         ReqSndMsgEntity reqSndMsgEntity = gson.fromJson(msg, ReqSndMsgEntity.class);
-        if (reqSndMsgEntity.getTags() == JMClientType.MCSENDTAGS_ENTER && !reqSndMsgEntity.getFrom().equals(TVAPP.getmTVAPP().getDevId())) {
+        if ((reqSndMsgEntity.getTags() == JMClientType.MCSENDTAGS_ENTER || reqSndMsgEntity.getTags() == JMClientType.MCSENDTAGS_LEAVE)
+                && !reqSndMsgEntity.getFrom().equals(TVAPP.getmTVAPP().getDevId())) {
             notifyRequestMessage(reqSndMsgEntity);
         }
     }
