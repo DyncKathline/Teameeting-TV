@@ -170,7 +170,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         public void updataAudioView() {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mAudioView.getLayoutParams();
             layoutParams.leftMargin = (mScreenWidth / 100) * x;
-            layoutParams.topMargin = (mScreenHeight / 100) * y+h/2+w;
+            layoutParams.topMargin = (mScreenHeight / 100) * y;
             mAudioView.setLayoutParams(layoutParams);
         }
 
@@ -246,7 +246,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         int statusHeight = ScreenUtils.getStatusHeight(context);
         int screenHeight = ScreenUtils.getScreenHeight(context);
 
-        mScreenHeight = screenHeight;
+        mScreenHeight = screenHeight + statusHeight;
         Log.e(TAG, screenHeight + "AnyRTCViewsTV:----statusHeight " + statusHeight + "---mScreenWidth----" + mScreenWidth);
 
         mVideoView.setOnTouchListener(this);
@@ -633,6 +633,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
             ImageView imageView = createImageView();
             remoteRender.setAudioView(imageView);
             if (size == 1) {
+                //只有等于1的时候才会调用这个应用
                 setScaleAnimation(remoteRender.mView);
             }
             peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
@@ -671,9 +672,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         }
         mLocalRender.mVideoTrack = localTrack;
 
-
         mVideoView.addView(mLocalRender.mLayout);
-
         //设置像的位置
         mLocalRender.mLayout.setPosition(mLocalRender.x, mLocalRender.y, mLocalRender.w, mLocalRender.h);
         mLocalRender.mView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
@@ -681,9 +680,8 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         mLocalRender.mVideoTrack.addRenderer(mLocalRender.mRenderer);
 
         //添加视频控制按钮
-//       FLocalRender.setAudioView(imageView);
-
-
+        ImageView imageView = createImageView();
+        mLocalRender.setAudioView(imageView);
     }
 
     @Override

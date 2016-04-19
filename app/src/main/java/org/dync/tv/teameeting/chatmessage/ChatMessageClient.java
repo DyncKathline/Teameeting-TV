@@ -78,6 +78,7 @@ public class ChatMessageClient implements JMClientHelper {
         if ((reqSndMsgEntity.getTags() == JMClientType.MCSENDTAGS_ENTER || reqSndMsgEntity.getTags() == JMClientType.MCSENDTAGS_LEAVE)
                 && !reqSndMsgEntity.getFrom().equals(TVAPP.getmTVAPP().getDevId())) {
             notifyRequestMessage(reqSndMsgEntity);
+            Log.e(TAG, "senMag: " );
         }
     }
 
