@@ -170,7 +170,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         public void updataAudioView() {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mAudioView.getLayoutParams();
             layoutParams.leftMargin = (mScreenWidth / 100) * x;
-            layoutParams.topMargin = (mScreenHeight / 100) * y;
+            layoutParams.topMargin = (mScreenHeight / 100) * y+h/2+w;
             mAudioView.setLayoutParams(layoutParams);
         }
 
@@ -632,7 +632,9 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
 
             ImageView imageView = createImageView();
             remoteRender.setAudioView(imageView);
-            setScaleAnimation(remoteRender.mView);
+            if (size == 1) {
+                setScaleAnimation(remoteRender.mView);
+            }
             peopleChangeListener.OnPeopleNumChange(mRemoteRenders.size());
         }
     }
@@ -679,8 +681,7 @@ public class AnyRTCViewsTV implements View.OnTouchListener, AnyRTCViewEvents {
         mLocalRender.mVideoTrack.addRenderer(mLocalRender.mRenderer);
 
         //添加视频控制按钮
-        ImageView imageView = createImageView();
-        mLocalRender.setAudioView(imageView);
+//       FLocalRender.setAudioView(imageView);
 
 
     }

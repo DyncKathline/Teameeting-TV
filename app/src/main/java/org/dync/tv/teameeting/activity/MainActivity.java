@@ -88,9 +88,7 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
         if (mDebug)
             Log.e(TAG, "onRequesageMsg: " + reqSndMsg.toString());
         meetingListEntity = mTVAPP.getMeetingIdtoEntity(reqSndMsg.getRoom());
-        if (reqSndMsg.getNmem()==0) {
-            peopleNumZero();
-        } else if (MeetType.MEET_NO_EXIST == meetType) {
+        if (MeetType.MEET_NO_EXIST == meetType) {
             Log.e("TAG", "没有人入会议");
             switchContent(mMeetingFragment, mCallRingMeFragment, TAG_FRAG_CALL_ME); //切换Fragment
             goneLayout(true);
@@ -114,20 +112,6 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
             }
         }
         sendPostCall(true);
-    }
-
-    /**
-     * 当房间中人数为0 的时候, 既房间退出所有人,只剩下自己;
-     */
-    private void peopleNumZero() {
-        switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING);
-        goneLayout(true);
-        mMeetingFragment.requestFocus();
-        //切换房间
-        destoryJoinMeet();
-        if (meetType == MeetType.MEET_EXIST) {
-            rLayoutWait.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -576,7 +560,14 @@ public class MainActivity extends BaseMeetingActivity implements View.OnClickLis
 
         } else {
             // 当人数为0的时候显示
-            peopleNumZero();
+            switchContent(mCallRingMeFragment, mMeetingFragment, TAG_FRAG_MEETING); //打开接通或者取消的按钮
+            goneLayout(true);
+            mMeetingFragment.requestFocus();
+            //切换房间
+            destoryJoinMeet();
+            if (meetType == MeetType.MEET_EXIST) {
+                rLayoutWait.setVisibility(View.GONE);
+            }
 
         }
     }

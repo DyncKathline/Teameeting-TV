@@ -89,9 +89,6 @@ public class RippleBackground extends RelativeLayout {
 
         float width = rippleRadius + rippleStrokeWidth;
         Log.e(TAG, "init: rippleRadius：" + width);
-        int measuredWidth = getMeasuredWidth();
-        int measuredHeight = getMeasuredHeight();
-        Log.e(TAG, "init: measuredWidth：" + measuredWidth + ",measuredHeight: " + measuredHeight);
         rippleParams = new LayoutParams((int) (2 * width), (int) (2 * width));
         rippleParams.addRule(CENTER_IN_PARENT, TRUE);
 
@@ -135,9 +132,6 @@ public class RippleBackground extends RelativeLayout {
 
         @Override
         protected void onDraw(Canvas canvas) {
-            int measuredWidth = getMeasuredWidth();
-            int measuredHeight = getMeasuredHeight();
-            Log.e(TAG, "onDraw: measuredWidth：" + measuredWidth + ",measuredHeight: " + measuredHeight);
             int radius = (Math.min(getWidth(), getHeight())) / 2;
             Log.e(TAG, "onDraw: " + "width: " + getWidth() + ",height: " + getHeight());
             canvas.drawCircle(radius, radius, radius - rippleStrokeWidth, paint);

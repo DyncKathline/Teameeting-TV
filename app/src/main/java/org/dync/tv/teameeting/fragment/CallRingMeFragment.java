@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +30,8 @@ import de.greenrobot.event.EventBus;
 public class CallRingMeFragment extends BaseFragment implements View.OnFocusChangeListener, View.OnClickListener {
     @Bind(R.id.llayout_call_ring_me)
     public LinearLayout llayoutCallRingMe;//layout_call_ring.xml
+    @Bind(R.id.llayout_rippleview)
+    LinearLayout llayoutRippleView;
     @Bind(R.id.content)
     RippleBackground rippleBackground;
     @Bind(R.id.tv_meeting_call)
@@ -53,7 +56,6 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
     protected void init() {
         initListener();
     }
-
 
     private void initListener() {
         btnAccept.setOnClickListener(this);
@@ -153,18 +155,18 @@ public class CallRingMeFragment extends BaseFragment implements View.OnFocusChan
 
     private void callRingStart() {
 
-        if (mediaPlayer != null) {
-            mediaPlayer.reset();
-        }
-        mediaPlayer = MediaPlayer.create(mContext, R.raw.incomingcall);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
+//        if (mediaPlayer != null) {
+//            mediaPlayer.reset();
+//        }
+//        mediaPlayer = MediaPlayer.create(mContext, R.raw.incomingcall);
+//        mediaPlayer.setLooping(true);
+//        mediaPlayer.start();
     }
 
     private void callRingStop() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-        }
+//        if (mediaPlayer != null) {
+//            mediaPlayer.stop();
+//        }
     }
 
     /**
